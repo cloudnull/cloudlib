@@ -1,0 +1,135 @@
+
+cloudlib.http package
+*********************
+
+
+cloudlib.http.rest module
+=========================
+
+Example Usage:
+
+>>> make_req = MakeRequest()
+>>> get_req = make_req.get('https://api.github.com/orgs/openstack')
+
+class class cloudlib.http.rest.MakeRequest(config=None, log_name='cloudlib.http.rest')
+
+   Bases: "object"
+
+   delete(url, headers=None, kwargs=None)
+
+      Make a DELETE request.
+
+      To make a DELETE request pass, "url"
+
+      Parameters:
+         * **url** -- "str"
+
+         * **headers** -- "dict"
+
+         * **kwargs** -- "dict"
+
+   get(url, headers=None, kwargs=None)
+
+      Make a GET request.
+
+      To make a GET request pass, "url"
+
+      Parameters:
+         * **url** -- "str"
+
+         * **headers** -- "dict"
+
+         * **kwargs** -- "dict"
+
+   head(url, headers=None, kwargs=None)
+
+      Make a HEAD request.
+
+      To make a HEAD request pass, "url"
+
+      Parameters:
+         * **url** -- "str"
+
+         * **headers** -- "dict"
+
+         * **kwargs** -- "dict"
+
+   option(url, headers=None, kwargs=None)
+
+      Make a OPTION request.
+
+      To make a OPTION request pass, "url"
+
+      Parameters:
+         * **url** -- "str"
+
+         * **headers** -- "dict"
+
+         * **kwargs** -- "dict"
+
+   patch(url, headers=None, body=None, kwargs=None)
+
+      Make a PATCH request.
+
+      To make a PATCH request pass, "url"
+
+      Parameters:
+         * **url** -- "str"
+
+         * **headers** -- "dict"
+
+         * **body** -- "object"
+
+         * **kwargs** -- "dict"
+
+   post(url, headers=None, body=None, kwargs=None)
+
+      Make a POST request.
+
+      To make a POST request pass, "url"
+
+      Parameters:
+         * **url** -- "str"
+
+         * **headers** -- "dict"
+
+         * **body** -- "object"
+
+         * **kwargs** -- "dict"
+
+   put(url, headers=None, body=None, kwargs=None)
+
+      Make a PUT request.
+
+      To make a PUT request pass, "url"
+
+      Parameters:
+         * **url** -- "str"
+
+         * **headers** -- "dict"
+
+         * **body** -- "object"
+
+         * **kwargs** -- "dict"
+
+cloudlib.http.rest.html_encode(path)
+
+   Return an HTML encoded Path.
+
+   Parameters:
+      **path** -- "str"
+
+   Returns:
+      "str"
+
+cloudlib.http.rest.parse_url(url)
+
+   Return a clean URL. Remove the prefix for the Auth URL if Found.
+
+   Parameters:
+      **url** --
+
+   Return aurl:
+
+Module contents
+===============

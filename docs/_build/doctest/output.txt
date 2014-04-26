@@ -1,0 +1,174 @@
+Results of doctest builder run on 2014-04-26 02:27:45
+=====================================================
+
+Document: cloudlib.logger
+-------------------------
+**********************************************************************
+File "cloudlib.logger.rst", line 5, in default
+Failed example:
+    logger = LogSetup()
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[0]>", line 1, in <module>
+        logger = LogSetup()
+    NameError: name 'LogSetup' is not defined
+**********************************************************************
+File "cloudlib.logger.rst", line 6, in default
+Failed example:
+    logger.default_logger(name='test_logger')
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[1]>", line 1, in <module>
+        logger.default_logger(name='test_logger')
+    NameError: name 'logger' is not defined
+**********************************************************************
+File "cloudlib.logger.rst", line 10, in default
+Failed example:
+    LOG = logging.getLogger(name='test_logger')
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[0]>", line 1, in <module>
+        LOG = logging.getLogger(name='test_logger')
+    NameError: name 'logging' is not defined
+**********************************************************************
+File "cloudlib.logger.rst", line 11, in default
+Failed example:
+    LOG.info('This is a test message')
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[1]>", line 1, in <module>
+        LOG.info('This is a test message')
+    NameError: name 'LOG' is not defined
+**********************************************************************
+1 items had failures:
+   4 of   4 in default
+4 tests in 1 items.
+0 passed and 4 failed.
+***Test Failed*** 4 failures.
+
+Document: cloudlib.messaging
+----------------------------
+**********************************************************************
+File "cloudlib.messaging.rst", line 15, in default
+Failed example:
+    mail = Mailer(
+        config=config_dict,
+    )
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[0]>", line 1, in <module>
+        mail = Mailer(
+    NameError: name 'Mailer' is not defined
+**********************************************************************
+File "cloudlib.messaging.rst", line 22, in default
+Failed example:
+    mail.send(
+        send_to='user@somedomain.sufix',
+        from_who='user@someotherdomain.sufix',
+        message='the quick brown fox jumped over the fence',
+        subject='Something really interesting'
+    )
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[0]>", line 1, in <module>
+        mail.send(
+    NameError: name 'mail' is not defined
+**********************************************************************
+1 items had failures:
+   2 of   3 in default
+3 tests in 1 items.
+1 passed and 2 failed.
+***Test Failed*** 2 failures.
+
+Document: cloudlib.config_file
+------------------------------
+**********************************************************************
+File "cloudlib.config_file.rst", line 12, in default
+Failed example:
+    config = ConfigurationSetup(name='example')
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[0]>", line 1, in <module>
+        config = ConfigurationSetup(name='example')
+    NameError: name 'ConfigurationSetup' is not defined
+**********************************************************************
+File "cloudlib.config_file.rst", line 13, in default
+Failed example:
+    default_args = config.config_args(section='default')
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[1]>", line 1, in <module>
+        default_args = config.config_args(section='default')
+    NameError: name 'config' is not defined
+**********************************************************************
+File "cloudlib.config_file.rst", line 14, in default
+Failed example:
+    print(default_args)
+    {'key': 'value'}
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[2]>", line 1, in <module>
+        print(default_args)
+    NameError: name 'default_args' is not defined
+**********************************************************************
+1 items had failures:
+   3 of   3 in default
+3 tests in 1 items.
+0 passed and 3 failed.
+***Test Failed*** 3 failures.
+
+Document: cloudlib.http
+-----------------------
+**********************************************************************
+File "cloudlib.http.rst", line 5, in default
+Failed example:
+    make_req = MakeRequest()
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[0]>", line 1, in <module>
+        make_req = MakeRequest()
+    NameError: name 'MakeRequest' is not defined
+**********************************************************************
+File "cloudlib.http.rst", line 6, in default
+Failed example:
+    get_req = make_req.get('https://api.github.com/orgs/openstack')
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[1]>", line 1, in <module>
+        get_req = make_req.get('https://api.github.com/orgs/openstack')
+    NameError: name 'make_req' is not defined
+**********************************************************************
+1 items had failures:
+   2 of   2 in default
+2 tests in 1 items.
+0 passed and 2 failed.
+***Test Failed*** 2 failures.
+
+Doctest summary
+===============
+   12 tests
+   11 failures in tests
+    0 failures in setup code
+    0 failures in cleanup code

@@ -1,0 +1,34 @@
+Cloudnull's Cloud Lib
+#####################
+:date: 2013-09-05 09:51
+:tags: cloud, library, general
+:category: \*nix
+
+Middleware for in application use
+=================================
+
+Ever wish you didn't have to develop some general purpose libraries and or
+middleware which you simply tote around between applications making simple
+tweaks when appropriate or blindly copying and pasting as needed? If so,
+then this is a library you can sink your code into.
+
+
+Why
+---
+
+I built this because I use the same code over and over again and I'm tired of
+copying the same bits between projects. So now, if I have something that's
+general purpose enough I'm going to put it in library which I'll use throughout
+my applications as I develop them.
+
+
+
+Info
+----
+
+* Project Url: https://github.com/cloudnull/cloudlib
+
+* Issues: https://github.com/cloudnull/cloudlib/issues
+
+
+Pull requests are always welcome.

@@ -1,0 +1,73 @@
+
+cloudlib.logger package
+***********************
+
+
+cloudlib.logger.logger module
+=============================
+
+Example Usage:
+
+>>> logger = LogSetup()
+>>> logger.default_logger(name='test_logger')
+
+>>> # The following can be placed in any module that you like
+>>> LOG = logging.getLogger(name='test_logger')
+>>> LOG.info('This is a test message')
+
+class class cloudlib.logger.logger.LogSetup(max_size=500, max_backup=5, debug_logging=False)
+
+   Bases: "object"
+
+   default_logger(name='cloudlib.logger.logger', enable_stream=False, enable_file=True)
+
+      Default Logger.
+
+      This is set to use a rotating File handler and a stream handler.
+      If you use this logger all logged output that is INFO and above
+      will be logged, unless debug_logging is set then everything is
+      logged. The logger will send the same data to a stdout as it
+      does to the specified log file.
+
+      You can disable the default handlers by setting either
+      *enable_file* or *enable_stream* to *False*
+
+      Parameters:
+         * **name** -- "str"
+
+         * **enable_stream** -- "bol"
+
+         * **enable_file** -- "bol"
+
+      Returns:
+         "object"
+
+   static return_logfile(filename, log_dir='/var/log')
+
+      Return a path for logging file.
+
+      If "log_dir" exists and the userID is 0 the log file will be
+      written to the provided log directory. If the UserID is not 0 or
+      log_dir does not exist the log file will be written to the users
+      home folder.
+
+      Parameters:
+         * **filename** -- "str"
+
+         * **log_dir** -- "str"
+
+      Returns:
+         "str"
+
+   set_handler(log, handler)
+
+      Set the logging level as well as the handlers.
+
+      Parameters:
+         * **log** -- "object"
+
+         * **handler** -- "object"
+
+
+Module contents
+===============
