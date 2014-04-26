@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cloudlib.logger.logger &mdash; cloudlib 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlib 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="cloudlib" href="../../cloudlib.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" accesskey="U">cloudlib</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cloudlib.logger.logger</h1><div class="highlight"><pre>
+<span class="c"># =============================================================================</span>
+<span class="c"># Copyright [2014] [Kevin Carter]</span>
+<span class="c"># License Information :</span>
+<span class="c"># This software has no warranty, it is provided &#39;as is&#39;. It is your</span>
+<span class="c"># responsibility to validate the behavior of the routines and its accuracy</span>
+<span class="c"># using the code provided. Consult the GNU General Public license for further</span>
+<span class="c"># details (see GNU General Public License).</span>
+<span class="c"># http://www.gnu.org/licenses/gpl.html</span>
+<span class="c"># =============================================================================</span>
+<span class="sd">&quot;&quot;&quot;Example Usage:</span>
+
+<span class="sd">&gt;&gt;&gt; logger = LogSetup()</span>
+<span class="sd">&gt;&gt;&gt; logger.default_logger(name=&#39;test_logger&#39;)</span>
+
+<span class="sd">&gt;&gt;&gt; # The following can be placed in any module that you like</span>
+<span class="sd">&gt;&gt;&gt; LOG = logging.getLogger(name=&#39;test_logger&#39;)</span>
+<span class="sd">&gt;&gt;&gt; LOG.info(&#39;This is a test message&#39;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">handlers</span>
+
+
+<div class="viewcode-block" id="LogSetup"><a class="viewcode-back" href="../../../cloudlib.logger.html#cloudlib.logger.logger.LogSetup">[docs]</a><span class="k">class</span> <span class="nc">LogSetup</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_size</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">max_backup</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">debug_logging</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setup Logging.</span>
+
+<span class="sd">        :param max_size: ``int``</span>
+<span class="sd">        :param max_backup: ``int``</span>
+<span class="sd">        :param debug_logging: ``bol``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">max_size</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_backup</span> <span class="o">=</span> <span class="n">max_backup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">debug_logging</span> <span class="o">=</span> <span class="n">debug_logging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="LogSetup.default_logger"><a class="viewcode-back" href="../../../cloudlib.logger.html#cloudlib.logger.logger.LogSetup.default_logger">[docs]</a>    <span class="k">def</span> <span class="nf">default_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">__name__</span><span class="p">,</span> <span class="n">enable_stream</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                       <span class="n">enable_file</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Default Logger.</span>
+
+<span class="sd">        This is set to use a rotating File handler and a stream handler.</span>
+<span class="sd">        If you use this logger all logged output that is INFO and above will</span>
+<span class="sd">        be logged, unless debug_logging is set then everything is logged.</span>
+<span class="sd">        The logger will send the same data to a stdout as it does to the</span>
+<span class="sd">        specified log file.</span>
+
+<span class="sd">        You can disable the default handlers by setting either `enable_file` or</span>
+<span class="sd">        `enable_stream` to `False`</span>
+
+<span class="sd">        :param name: ``str``</span>
+<span class="sd">        :param enable_stream: ``bol``</span>
+<span class="sd">        :param enable_file: ``bol``</span>
+<span class="sd">        :return: ``object``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span>
+                <span class="s">&#39;</span><span class="si">%(asctime)s</span><span class="s"> - </span><span class="si">%(module)s</span><span class="s">:</span><span class="si">%(levelname)s</span><span class="s"> =&gt; </span><span class="si">%(message)s</span><span class="s">&#39;</span>
+            <span class="p">)</span>
+
+        <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">enable_file</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">file_handler</span> <span class="o">=</span> <span class="n">handlers</span><span class="o">.</span><span class="n">RotatingFileHandler</span><span class="p">(</span>
+                <span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_logfile</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">.log&#39;</span> <span class="o">%</span> <span class="n">name</span><span class="p">),</span>
+                <span class="n">maxBytes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">,</span>
+                <span class="n">backupCount</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_backup</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_handler</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="n">file_handler</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">enable_stream</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">stream_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_handler</span><span class="p">(</span><span class="n">log</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="n">stream_handler</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Logger [ </span><span class="si">%s</span><span class="s"> ] loaded&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">log</span>
+</div>
+<div class="viewcode-block" id="LogSetup.set_handler"><a class="viewcode-back" href="../../../cloudlib.logger.html#cloudlib.logger.logger.LogSetup.set_handler">[docs]</a>    <span class="k">def</span> <span class="nf">set_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the logging level as well as the handlers.</span>
+
+<span class="sd">        :param log: ``object``</span>
+<span class="sd">        :param handler: ``object``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_logging</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+            <span class="n">handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+            <span class="n">handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+        <span class="n">handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">handler</span><span class="p">)</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="LogSetup.return_logfile"><a class="viewcode-back" href="../../../cloudlib.logger.html#cloudlib.logger.logger.LogSetup.return_logfile">[docs]</a>    <span class="k">def</span> <span class="nf">return_logfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">log_dir</span><span class="o">=</span><span class="s">&#39;/var/log&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a path for logging file.</span>
+
+<span class="sd">        If ``log_dir`` exists and the userID is 0 the log file will be written</span>
+<span class="sd">        to the provided log directory. If the UserID is not 0 or log_dir does</span>
+<span class="sd">        not exist the log file will be written to the users home folder.</span>
+
+<span class="sd">        :param filename: ``str``</span>
+<span class="sd">        :param log_dir: ``str``</span>
+<span class="sd">        :return: ``str``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getuid</span><span class="p">()</span>
+        <span class="n">home</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&#39;HOME&#39;</span><span class="p">)</span>
+        <span class="n">default_log_location</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default_log_location</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">log_dir</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">default_log_location</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" >cloudlib</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Kevin Carter.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

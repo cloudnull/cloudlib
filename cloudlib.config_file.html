@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cloudlib.config_file package &mdash; cloudlib 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="cloudlib 0.0.1 documentation" href="index.html" />
+    <link rel="up" title="cloudlib package" href="cloudlib.html" />
+    <link rel="next" title="cloudlib.http package" href="cloudlib.http.html" />
+    <link rel="prev" title="cloudlib package" href="cloudlib.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cloudlib.http.html" title="cloudlib.http package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cloudlib.html" title="cloudlib package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="cloudlib.html" accesskey="U">cloudlib package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cloudlib-config-file-package">
+<h1>cloudlib.config_file package<a class="headerlink" href="#cloudlib-config-file-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-cloudlib.config_file.parse_ini">
+<span id="cloudlib-config-file-parse-ini-module"></span><h2>cloudlib.config_file.parse_ini module<a class="headerlink" href="#module-cloudlib.config_file.parse_ini" title="Permalink to this headline">¶</a></h2>
+<p>Example Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="c"># In your shell create a file named .example.ini in your home folder</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># dd sections to the file IE:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># [default]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># key = value</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">ConfigurationSetup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;example&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">default_args</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">config_args</span><span class="p">(</span><span class="n">section</span><span class="o">=</span><span class="s">&#39;default&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">default_args</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">{</span><span class="s">&#39;key&#39;</span><span class="p">:</span> <span class="s">&#39;value&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="cloudlib.config_file.parse_ini.ConfigurationSetup">
+<em class="property">class </em><tt class="descclassname">cloudlib.config_file.parse_ini.</tt><tt class="descname">ConfigurationSetup</tt><big>(</big><em>name</em>, <em>log_name='cloudlib.config_file.parse_ini'</em><big>)</big><a class="reference internal" href="_modules/cloudlib/config_file/parse_ini.html#ConfigurationSetup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.config_file.parse_ini.ConfigurationSetup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="cloudlib.config_file.parse_ini.ConfigurationSetup.check_perms">
+<tt class="descname">check_perms</tt><big>(</big><em>perms='0600</em>, <em>0400'</em><big>)</big><a class="reference internal" href="_modules/cloudlib/config_file/parse_ini.html#ConfigurationSetup.check_perms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.config_file.parse_ini.ConfigurationSetup.check_perms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check and enforce the permissions of the config file.</p>
+<p>Enforce permission on a provided configuration file. This will check
+and see if the permission are set based on the permission octet as
+set in the <tt class="docutils literal"><span class="pre">perms</span></tt> value. <tt class="docutils literal"><span class="pre">perms</span></tt> is a comma separated list
+of acceptable perms in octal form. Defaults permissions to, 0600 and
+0400.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>perms</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cloudlib.config_file.parse_ini.ConfigurationSetup.config_args">
+<tt class="descname">config_args</tt><big>(</big><em>section='default'</em><big>)</big><a class="reference internal" href="_modules/cloudlib/config_file/parse_ini.html#ConfigurationSetup.config_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.config_file.parse_ini.ConfigurationSetup.config_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loop through the configuration file and set all of our values.</p>
+<dl class="docutils">
+<dt>Note:</dt>
+<dd>that anything can be set as a &#8220;section&#8221; in the argument file. If a
+section does not exist an empty dict will be returned.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">dict</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cloudlib.config_file.parse_ini.ConfigurationSetup.load_config">
+<tt class="descname">load_config</tt><big>(</big><em>path=None</em>, <em>home=False</em>, <em>ext='ini'</em><big>)</big><a class="reference internal" href="_modules/cloudlib/config_file/parse_ini.html#ConfigurationSetup.load_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.config_file.parse_ini.ConfigurationSetup.load_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the full path to a configuration file.</p>
+<p>This will look for configuration files in the <tt class="docutils literal"><span class="pre">full_path</span></tt>, in
+the users home folder, or in a config directory in &#8220;/etc&#8221;.  If you set
+<cite>home=True</cite>, the system will look for a &#8220;hidden&#8221; configuration file in
+the executing users $HOME folder.</p>
+<dl class="docutils">
+<dt>The precedence is as follows:</dt>
+<dd>full_path/name.ini
+/home/$USER/.name.ini
+/etc/name/name.ini</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>path</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></li>
+<li><strong>home</strong> &#8211; <tt class="docutils literal"><span class="pre">bol</span></tt></li>
+<li><strong>ext</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">str</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-cloudlib.config_file">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cloudlib.config_file" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">cloudlib.config_file package</a><ul>
+<li><a class="reference internal" href="#module-cloudlib.config_file.parse_ini">cloudlib.config_file.parse_ini module</a></li>
+<li><a class="reference internal" href="#module-cloudlib.config_file">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cloudlib.html"
+                        title="previous chapter">cloudlib package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cloudlib.http.html"
+                        title="next chapter">cloudlib.http package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/cloudlib.config_file.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cloudlib.http.html" title="cloudlib.http package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cloudlib.html" title="cloudlib package"
+             >previous</a> |</li>
+        <li><a href="index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="cloudlib.html" >cloudlib package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Kevin Carter.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

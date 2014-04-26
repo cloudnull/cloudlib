@@ -1,0 +1,349 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cloudlib.http.rest &mdash; cloudlib 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlib 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="cloudlib" href="../../cloudlib.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" accesskey="U">cloudlib</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cloudlib.http.rest</h1><div class="highlight"><pre>
+<span class="c"># =============================================================================</span>
+<span class="c"># Copyright [2014] [Kevin Carter]</span>
+<span class="c"># License Information :</span>
+<span class="c"># This software has no warranty, it is provided &#39;as is&#39;. It is your</span>
+<span class="c"># responsibility to validate the behavior of the routines and its accuracy</span>
+<span class="c"># using the code provided. Consult the GNU General Public license for further</span>
+<span class="c"># details (see GNU General Public License).</span>
+<span class="c"># http://www.gnu.org/licenses/gpl.html</span>
+<span class="c"># =============================================================================</span>
+<span class="sd">&quot;&quot;&quot;Example Usage:</span>
+
+<span class="sd">&gt;&gt;&gt; make_req = MakeRequest()</span>
+<span class="sd">&gt;&gt;&gt; get_req = make_req.get(&#39;https://api.github.com/orgs/openstack&#39;)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">httplib</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">urlparse</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">cloudlib.utils</span> <span class="kn">import</span> <span class="n">basic</span>
+
+
+<div class="viewcode-block" id="parse_url"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.parse_url">[docs]</a><span class="k">def</span> <span class="nf">parse_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a clean URL. Remove the prefix for the Auth URL if Found.</span>
+
+<span class="sd">    :param url:</span>
+<span class="sd">    :return aurl:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s">&#39;http&#39;</span><span class="p">,</span> <span class="s">&#39;https&#39;</span><span class="p">,</span> <span class="s">&#39;//&#39;</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;//&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s">&#39;http&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlparse</span><span class="p">(</span><span class="n">urlparse</span><span class="o">.</span><span class="n">urljoin</span><span class="p">(</span><span class="s">&#39;http://&#39;</span><span class="p">,</span> <span class="n">url</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="html_encode"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.html_encode">[docs]</a><span class="k">def</span> <span class="nf">html_encode</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return an HTML encoded Path.</span>
+
+<span class="sd">    :param path: ``str``</span>
+<span class="sd">    :return: ``str``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_path</span> <span class="o">=</span> <span class="n">basic</span><span class="o">.</span><span class="n">ensure_string</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">urllib</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">_path</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="MakeRequest"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.MakeRequest">[docs]</a><span class="k">class</span> <span class="nc">MakeRequest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">log_name</span><span class="o">=</span><span class="n">__name__</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make an HTTP request.</span>
+
+<span class="sd">        This class allows you to create custom request args and or enable</span>
+<span class="sd">        debug mode.</span>
+
+<span class="sd">        Presently the ``config`` argument would only be used to enable</span>
+<span class="sd">        debug.</span>
+
+<span class="sd">        :param config: ``dict``</span>
+<span class="sd">        :param log_name: ``str`` This is used to log against an existing log</span>
+<span class="sd">                                 handler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">log_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;timeout&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s">&#39;cloudlib&#39;</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s">&#39;headers&#39;</span><span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;headers&#39;</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;debug&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+                <span class="n">httplib</span><span class="o">.</span><span class="n">HTTPConnection</span><span class="o">.</span><span class="n">debuglevel</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a URL string.</span>
+
+<span class="sd">        If the ``url`` parameter is a ParsedResult from `urlparse` the full url</span>
+<span class="sd">        will be unparsed and made into a string. Otherwise the ``url``</span>
+<span class="sd">        parameter is returned as is.</span>
+
+<span class="sd">        :param url: ``str`` || ``object``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">ParseResult</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">urlparse</span><span class="o">.</span><span class="n">urlunparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">url</span>
+
+    <span class="k">def</span> <span class="nf">_report_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">exp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;When making the request, if an error happens, log it.&quot;&quot;&quot;</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s">&quot;Failure to perform </span><span class="si">%s</span><span class="s"> due to [ </span><span class="si">%s</span><span class="s"> ] ERROR:</span><span class="se">\n</span><span class="si">%s</span><span class="s">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">exp</span><span class="p">,</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make a request.</span>
+
+<span class="sd">        To make a request pass the ``method`` and the ``url``. Valid methods</span>
+<span class="sd">        are, ``[&#39;post&#39;, &#39;put&#39;, &#39;get&#39;, &#39;delete&#39;, &#39;patch&#39;, &#39;option&#39;, &#39;head&#39;]``.</span>
+
+<span class="sd">        :param url: ``str``</span>
+<span class="sd">        :param headers: ``dict``</span>
+<span class="sd">        :param body: ``object``</span>
+<span class="sd">        :param kwargs: ``dict``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="n">basic</span><span class="o">.</span><span class="n">dict_update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">_headers</span> <span class="o">=</span> <span class="n">basic</span><span class="o">.</span><span class="n">dict_update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">headers</span><span class="p">)</span>
+        <span class="n">_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_url</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">requests</span><span class="p">,</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">body</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">_headers</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">_url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">_headers</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">reason</span><span class="p">,</span> <span class="n">resp</span><span class="o">.</span><span class="n">request</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_report_error</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="n">method</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">exp</span><span class="o">=</span><span class="n">exp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">resp</span>
+
+<div class="viewcode-block" id="MakeRequest.post"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.MakeRequest.post">[docs]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make a POST request.</span>
+
+<span class="sd">        To make a POST request pass, ``url``</span>
+
+<span class="sd">        :param url: ``str``</span>
+<span class="sd">        :param headers: ``dict``</span>
+<span class="sd">        :param body: ``object``</span>
+<span class="sd">        :param kwargs: ``dict``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s">&#39;post&#39;</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MakeRequest.head"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.MakeRequest.head">[docs]</a>    <span class="k">def</span> <span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make a HEAD request.</span>
+
+<span class="sd">        To make a HEAD request pass, ``url``</span>
+
+<span class="sd">        :param url: ``str``</span>
+<span class="sd">        :param headers: ``dict``</span>
+<span class="sd">        :param kwargs: ``dict``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s">&#39;head&#39;</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MakeRequest.patch"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.MakeRequest.patch">[docs]</a>    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make a PATCH request.</span>
+
+<span class="sd">        To make a PATCH request pass, ``url``</span>
+
+<span class="sd">        :param url: ``str``</span>
+<span class="sd">        :param headers: ``dict``</span>
+<span class="sd">        :param body: ``object``</span>
+<span class="sd">        :param kwargs: ``dict``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s">&#39;patch&#39;</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MakeRequest.put"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.MakeRequest.put">[docs]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make a PUT request.</span>
+
+<span class="sd">        To make a PUT request pass, ``url``</span>
+
+<span class="sd">        :param url: ``str``</span>
+<span class="sd">        :param headers: ``dict``</span>
+<span class="sd">        :param body: ``object``</span>
+<span class="sd">        :param kwargs: ``dict``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s">&#39;put&#39;</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MakeRequest.delete"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.MakeRequest.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make a DELETE request.</span>
+
+<span class="sd">        To make a DELETE request pass, ``url``</span>
+
+<span class="sd">        :param url: ``str``</span>
+<span class="sd">        :param headers: ``dict``</span>
+<span class="sd">        :param kwargs: ``dict``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s">&#39;delete&#39;</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MakeRequest.get"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.MakeRequest.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make a GET request.</span>
+
+<span class="sd">        To make a GET request pass, ``url``</span>
+
+<span class="sd">        :param url: ``str``</span>
+<span class="sd">        :param headers: ``dict``</span>
+<span class="sd">        :param kwargs: ``dict``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s">&#39;get&#39;</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MakeRequest.option"><a class="viewcode-back" href="../../../cloudlib.http.html#cloudlib.http.rest.MakeRequest.option">[docs]</a>    <span class="k">def</span> <span class="nf">option</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make a OPTION request.</span>
+
+<span class="sd">        To make a OPTION request pass, ``url``</span>
+
+<span class="sd">        :param url: ``str``</span>
+<span class="sd">        :param headers: ``dict``</span>
+<span class="sd">        :param kwargs: ``dict``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_request</span><span class="p">(</span>
+            <span class="n">method</span><span class="o">=</span><span class="s">&#39;option&#39;</span><span class="p">,</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" >cloudlib</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Kevin Carter.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
