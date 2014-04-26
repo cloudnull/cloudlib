@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cloudlib.tests.test_messaging_mail &mdash; cloudlib 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlib 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="cloudlib.tests" href="../tests.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" >cloudlib</a> &raquo;</li>
+          <li><a href="../tests.html" accesskey="U">cloudlib.tests</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cloudlib.tests.test_messaging_mail</h1><div class="highlight"><pre>
+<span class="c"># =============================================================================</span>
+<span class="c"># Copyright [2014] [Kevin Carter]</span>
+<span class="c"># License Information :</span>
+<span class="c"># This software has no warranty, it is provided &#39;as is&#39;. It is your</span>
+<span class="c"># responsibility to validate the behavior of the routines and its accuracy</span>
+<span class="c"># using the code provided. Consult the GNU General Public license for further</span>
+<span class="c"># details (see GNU General Public License).</span>
+<span class="c"># http://www.gnu.org/licenses/gpl.html</span>
+<span class="c"># =============================================================================</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">import</span> <span class="nn">mock</span>
+
+<span class="kn">import</span> <span class="nn">cloudlib</span>
+
+<span class="kn">from</span> <span class="nn">cloudlib.messaging</span> <span class="kn">import</span> <span class="n">mail</span>
+<span class="kn">from</span> <span class="nn">cloudlib</span> <span class="kn">import</span> <span class="n">tests</span>
+
+
+<div class="viewcode-block" id="TestMessagingMail"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail">[docs]</a><span class="k">class</span> <span class="nc">TestMessagingMail</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestMessagingMail.setUp"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">Mock</span><span class="p">(</span><span class="n">side_effect</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">FakeSmtp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">Mailer</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_no_config"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_no_config">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">cloudlib</span><span class="o">.</span><span class="n">MissingConfig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_no_missing_values"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_no_missing_values">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_missing_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">cloudlib</span><span class="o">.</span><span class="n">MissingConfigValue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">,</span> <span class="p">{})</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_no_missing_port"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_no_missing_port">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_missing_port</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">cloudlib</span><span class="o">.</span><span class="n">MissingConfigValue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_no_missing_url"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_no_missing_url">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_missing_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">cloudlib</span><span class="o">.</span><span class="n">MissingConfigValue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_smtp_debug"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_smtp_debug">[docs]</a>    <span class="k">def</span> <span class="nf">test_smtp_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">,</span> <span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">,</span> <span class="s">&#39;debug&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+        <span class="n">mailer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">url</span> <span class="o">==</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">port</span> <span class="o">==</span> <span class="mi">9000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">starttls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">cert</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">logged_in</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_smtp_login_debug"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_smtp_login_debug">[docs]</a>    <span class="k">def</span> <span class="nf">test_smtp_login_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">,</span>
+            <span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;debug&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="s">&#39;mail_username&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;mail_password&#39;</span><span class="p">:</span> <span class="s">&#39;test_password&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">mailer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">url</span> <span class="o">==</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">port</span> <span class="o">==</span> <span class="mi">9000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">starttls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">key</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">cert</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_smtp_login_debug_ssl"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_smtp_login_debug_ssl">[docs]</a>    <span class="k">def</span> <span class="nf">test_smtp_login_debug_ssl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">,</span>
+            <span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;debug&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+            <span class="s">&#39;mail_username&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;mail_password&#39;</span><span class="p">:</span> <span class="s">&#39;test_password&#39;</span><span class="p">,</span>
+            <span class="s">&#39;mail_key&#39;</span><span class="p">:</span> <span class="s">&#39;test_key_file&#39;</span><span class="p">,</span>
+            <span class="s">&#39;mail_cert&#39;</span><span class="p">:</span> <span class="s">&#39;test_cert_file&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">mailer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">url</span> <span class="o">==</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">port</span> <span class="o">==</span> <span class="mi">9000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">starttls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="s">&#39;test_key_file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">cert</span><span class="p">,</span> <span class="s">&#39;test_cert_file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_smtp"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_smtp">[docs]</a>    <span class="k">def</span> <span class="nf">test_smtp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">,</span> <span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">}</span>
+
+        <span class="n">mailer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">port</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">starttls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">cert</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_smtp_login"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_smtp_login">[docs]</a>    <span class="k">def</span> <span class="nf">test_smtp_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">,</span>
+            <span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;debug&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+            <span class="s">&#39;mail_username&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;mail_password&#39;</span><span class="p">:</span> <span class="s">&#39;test_password&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">mailer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">starttls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_smtp_login_ssl"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_smtp_login_ssl">[docs]</a>    <span class="k">def</span> <span class="nf">test_smtp_login_ssl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">,</span>
+            <span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;mail_username&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;mail_password&#39;</span><span class="p">:</span> <span class="s">&#39;test_password&#39;</span><span class="p">,</span>
+            <span class="s">&#39;mail_key&#39;</span><span class="p">:</span> <span class="s">&#39;test_key_file&#39;</span><span class="p">,</span>
+            <span class="s">&#39;mail_cert&#39;</span><span class="p">:</span> <span class="s">&#39;test_cert_file&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">mailer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">url</span> <span class="o">==</span> <span class="s">&#39;test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">port</span> <span class="o">==</span> <span class="mi">9000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">starttls</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="s">&#39;test_key_file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">cert</span><span class="p">,</span> <span class="s">&#39;test_cert_file&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_smtp_send"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_smtp_send">[docs]</a>    <span class="k">def</span> <span class="nf">test_smtp_send</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">,</span>
+            <span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span>
+        <span class="p">}</span>
+        <span class="n">mailer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="n">mailer_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;send_to&#39;</span><span class="p">:</span> <span class="s">&#39;send_to@test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;from_who&#39;</span><span class="p">:</span> <span class="s">&#39;from_who@test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;subject&#39;</span><span class="p">:</span> <span class="s">&#39;test subject&#39;</span><span class="p">,</span>
+            <span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="s">&#39;test nessage&#39;</span>
+        <span class="p">}</span>
+        <span class="n">mailer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="o">**</span><span class="n">mailer_kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">message</span><span class="p">[</span><span class="s">&#39;from_addr&#39;</span><span class="p">],</span> <span class="s">&#39;from_who@test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">message</span><span class="p">[</span><span class="s">&#39;to_addrs&#39;</span><span class="p">],</span> <span class="s">&#39;send_to@test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">message</span><span class="p">[</span><span class="s">&#39;msg&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="s">&#39;Reply-To: from_who@test&#39;</span> <span class="ow">in</span> <span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">message</span><span class="p">[</span><span class="s">&#39;msg&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">make_quit</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMail.test_smtp_send_reply"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMail.test_smtp_send_reply">[docs]</a>    <span class="k">def</span> <span class="nf">test_smtp_send_reply</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">,</span>
+            <span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span>
+        <span class="p">}</span>
+        <span class="n">mailer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="n">mailer_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;send_to&#39;</span><span class="p">:</span> <span class="s">&#39;send_to@test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;from_who&#39;</span><span class="p">:</span> <span class="s">&#39;from_who@test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;subject&#39;</span><span class="p">:</span> <span class="s">&#39;test subject&#39;</span><span class="p">,</span>
+            <span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="s">&#39;test nessage&#39;</span><span class="p">,</span>
+            <span class="s">&#39;reply_to&#39;</span><span class="p">:</span> <span class="s">&#39;reply_to@test&#39;</span>
+        <span class="p">}</span>
+        <span class="n">mailer</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="o">**</span><span class="n">mailer_kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">message</span><span class="p">[</span><span class="s">&#39;from_addr&#39;</span><span class="p">],</span> <span class="s">&#39;from_who@test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">message</span><span class="p">[</span><span class="s">&#39;to_addrs&#39;</span><span class="p">],</span> <span class="s">&#39;send_to@test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">message</span><span class="p">[</span><span class="s">&#39;msg&#39;</span><span class="p">],</span> <span class="nb">str</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="s">&#39;Reply-To: reply_to@test&#39;</span> <span class="ow">in</span> <span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">message</span><span class="p">[</span><span class="s">&#39;msg&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">make_quit</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="TestMessagingMailException"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMailException">[docs]</a><span class="k">class</span> <span class="nc">TestMessagingMailException</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestMessagingMailException.setUp"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMailException.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">Mock</span><span class="p">(</span><span class="n">side_effect</span><span class="o">=</span><span class="n">tests</span><span class="o">.</span><span class="n">FakeSmtp</span><span class="p">)</span>
+        <span class="n">mail</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">MIMEText</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">Mock</span><span class="p">(</span>
+            <span class="n">side_effect</span><span class="o">=</span><span class="ne">Exception</span><span class="p">(</span><span class="s">&#39;Fail Test&#39;</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mail</span> <span class="o">=</span> <span class="n">mail</span><span class="o">.</span><span class="n">Mailer</span>
+</div>
+<div class="viewcode-block" id="TestMessagingMailException.test_smtp_send_exception"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_messaging_mail.TestMessagingMailException.test_smtp_send_exception">[docs]</a>    <span class="k">def</span> <span class="nf">test_smtp_send_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;mail_port&#39;</span><span class="p">:</span> <span class="mi">9000</span><span class="p">,</span>
+            <span class="s">&#39;mail_url&#39;</span><span class="p">:</span> <span class="s">&#39;test&#39;</span>
+        <span class="p">}</span>
+        <span class="n">mailer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mail</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="n">mailer_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;send_to&#39;</span><span class="p">:</span> <span class="s">&#39;send_to@test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;from_who&#39;</span><span class="p">:</span> <span class="s">&#39;from_who@test&#39;</span><span class="p">,</span>
+            <span class="s">&#39;subject&#39;</span><span class="p">:</span> <span class="s">&#39;test subject&#39;</span><span class="p">,</span>
+            <span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="s">&#39;test nessage&#39;</span><span class="p">,</span>
+            <span class="s">&#39;reply_to&#39;</span><span class="p">:</span> <span class="s">&#39;reply_to@test&#39;</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span>
+            <span class="n">cloudlib</span><span class="o">.</span><span class="n">MessageFailure</span><span class="p">,</span> <span class="n">mailer</span><span class="o">.</span><span class="n">send</span><span class="p">,</span> <span class="o">**</span><span class="n">mailer_kwargs</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">mailer</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">make_quit</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" >cloudlib</a> &raquo;</li>
+          <li><a href="../tests.html" >cloudlib.tests</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Kevin Carter.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

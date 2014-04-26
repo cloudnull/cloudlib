@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cloudlib.messaging.mail &mdash; cloudlib 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlib 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="cloudlib" href="../../cloudlib.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" accesskey="U">cloudlib</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cloudlib.messaging.mail</h1><div class="highlight"><pre>
+<span class="c"># =============================================================================</span>
+<span class="c"># Copyright [2014] [Kevin Carter]</span>
+<span class="c"># License Information :</span>
+<span class="c"># This software has no warranty, it is provided &#39;as is&#39;. It is your</span>
+<span class="c"># responsibility to validate the behavior of the routines and its accuracy</span>
+<span class="c"># using the code provided. Consult the GNU General Public license for further</span>
+<span class="c"># details (see GNU General Public License).</span>
+<span class="c"># http://www.gnu.org/licenses/gpl.html</span>
+<span class="c"># =============================================================================</span>
+<span class="sd">&quot;&quot;&quot;Example Usage:</span>
+
+<span class="sd">&gt;&gt;&gt; config_dict = {</span>
+<span class="sd">...     &#39;mail_url&#39;: &#39;smtp.google.com&#39;,</span>
+<span class="sd">...     &#39;mail_port&#39;: 587,</span>
+<span class="sd">...     &#39;mail_key&#39;: &#39;/etc/ssl/mail.key&#39;,</span>
+<span class="sd">...     &#39;mail_cert&#39;: &#39;/etc/ssl/mail.crt&#39;,</span>
+<span class="sd">...     &#39;mail_username&#39;: &#39;UserName&#39;,</span>
+<span class="sd">...     &#39;mail_password&#39;: &#39;PassW0rd&#39;</span>
+<span class="sd">... }</span>
+
+<span class="sd">&gt;&gt;&gt; mail = Mailer(</span>
+<span class="sd">...     config=config_dict,</span>
+<span class="sd">... )</span>
+
+<span class="sd">&gt;&gt;&gt; mail.send(</span>
+<span class="sd">...     send_to=&#39;user@somedomain.sufix&#39;,</span>
+<span class="sd">...     from_who=&#39;user@someotherdomain.sufix&#39;,</span>
+<span class="sd">...     message=&#39;the quick brown fox jumped over the fence&#39;,</span>
+<span class="sd">...     subject=&#39;Something really interesting&#39;</span>
+<span class="sd">... )</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">smtplib</span>
+<span class="kn">from</span> <span class="nn">email.mime</span> <span class="kn">import</span> <span class="n">text</span>
+
+<span class="kn">import</span> <span class="nn">cloudlib</span>
+
+
+<div class="viewcode-block" id="Mailer"><a class="viewcode-back" href="../../../cloudlib.messaging.html#cloudlib.messaging.mail.Mailer">[docs]</a><span class="k">class</span> <span class="nc">Mailer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">log_name</span><span class="o">=</span><span class="n">__name__</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;General purpose Email Message Sender.</span>
+
+<span class="sd">        This module is used to send messages based on some set values.</span>
+
+<span class="sd">        :param config: ``dict``</span>
+<span class="sd">        :param log_name: ``str`` This is used to log against an existing log</span>
+<span class="sd">                                 handler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Set logger</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">log_name</span><span class="p">)</span>
+
+        <span class="c"># Set the default args</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;No Configuration Provided&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">cloudlib</span><span class="o">.</span><span class="n">MissingConfig</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+
+        <span class="c"># Set SMTP</span>
+        <span class="n">mail_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mail_url&#39;</span><span class="p">)</span>
+        <span class="n">mail_port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mail_port&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mail_port</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">cloudlib</span><span class="o">.</span><span class="n">MissingConfigValue</span><span class="p">(</span><span class="s">&#39;Missing &quot;mail_port&quot; in config&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mail_url</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">cloudlib</span><span class="o">.</span><span class="n">MissingConfigValue</span><span class="p">(</span><span class="s">&#39;Missing &quot;mail_url&quot; in config&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span> <span class="o">=</span> <span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="n">mail_url</span><span class="p">,</span> <span class="n">mail_port</span><span class="p">)</span>
+
+        <span class="c"># enable Debug</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;debug&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mail_key&#39;</span><span class="p">)</span>
+        <span class="n">cert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mail_cert&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">cert</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">starttls</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">cert</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+
+        <span class="n">username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mail_username&#39;</span><span class="p">)</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;mail_password&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">username</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">password</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Mailer.send"><a class="viewcode-back" href="../../../cloudlib.messaging.html#cloudlib.messaging.mail.Mailer.send">[docs]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">send_to</span><span class="p">,</span> <span class="n">from_who</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">reply_to</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send Email.</span>
+
+<span class="sd">        To use this module pass in a message, send_to, from_who, and subject.</span>
+
+<span class="sd">        :param send_to: ``str``</span>
+<span class="sd">        :param from_who: ``str``</span>
+<span class="sd">        :param subject: ``str``</span>
+<span class="sd">        :param message: ``str``</span>
+<span class="sd">        :param reply_to: ``str``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Set the reply to address if it&#39;s None</span>
+        <span class="k">if</span> <span class="n">reply_to</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">reply_to</span> <span class="o">=</span> <span class="n">from_who</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">encoded_message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;utf8&#39;</span><span class="p">)</span>
+            <span class="n">em_msg</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">MIMEText</span><span class="p">(</span><span class="n">encoded_message</span><span class="p">,</span> <span class="s">&#39;plain&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="n">em_msg</span><span class="p">[</span><span class="s">&quot;Subject&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">subject</span>
+            <span class="n">em_msg</span><span class="p">[</span><span class="s">&quot;From&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">from_who</span>
+            <span class="n">em_msg</span><span class="p">[</span><span class="s">&quot;To&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">send_to</span>
+            <span class="n">em_msg</span><span class="p">[</span><span class="s">&quot;Reply-To&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reply_to</span>
+
+            <span class="c"># Send Customer Messages</span>
+            <span class="n">built_message</span> <span class="o">=</span> <span class="n">em_msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">()</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span>
+                <span class="n">from_addr</span><span class="o">=</span><span class="n">em_msg</span><span class="p">[</span><span class="s">&quot;From&quot;</span><span class="p">],</span>
+                <span class="n">to_addrs</span><span class="o">=</span><span class="n">em_msg</span><span class="p">[</span><span class="s">&quot;To&quot;</span><span class="p">],</span>
+                <span class="n">msg</span><span class="o">=</span><span class="n">built_message</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Failed to send message due to &quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="n">exp</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">cloudlib</span><span class="o">.</span><span class="n">MessageFailure</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smtp</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" >cloudlib</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Kevin Carter.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

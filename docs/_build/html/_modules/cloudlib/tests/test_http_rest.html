@@ -1,0 +1,325 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cloudlib.tests.test_http_rest &mdash; cloudlib 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="cloudlib 0.0.1 documentation" href="../../../index.html" />
+    <link rel="up" title="cloudlib.tests" href="../tests.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" >cloudlib</a> &raquo;</li>
+          <li><a href="../tests.html" accesskey="U">cloudlib.tests</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for cloudlib.tests.test_http_rest</h1><div class="highlight"><pre>
+<span class="c"># =============================================================================</span>
+<span class="c"># Copyright [2014] [Kevin Carter]</span>
+<span class="c"># License Information :</span>
+<span class="c"># This software has no warranty, it is provided &#39;as is&#39;. It is your</span>
+<span class="c"># responsibility to validate the behavior of the routines and its accuracy</span>
+<span class="c"># using the code provided. Consult the GNU General Public license for further</span>
+<span class="c"># details (see GNU General Public License).</span>
+<span class="c"># http://www.gnu.org/licenses/gpl.html</span>
+<span class="c"># =============================================================================</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+
+<span class="kn">import</span> <span class="nn">mock</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">from</span> <span class="nn">cloudlib.http</span> <span class="kn">import</span> <span class="n">rest</span>
+<span class="kn">from</span> <span class="nn">cloudlib</span> <span class="kn">import</span> <span class="n">tests</span>
+
+
+<div class="viewcode-block" id="TestHttpMakeRequest"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest">[docs]</a><span class="k">class</span> <span class="nc">TestHttpMakeRequest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestHttpMakeRequest.setUp"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="s">&#39;http://example.com&#39;</span>
+
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">Mock</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">tests</span><span class="o">.</span><span class="n">Logger</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">MakeRequest</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span> <span class="o">=</span> <span class="n">tests</span><span class="o">.</span><span class="n">FakeHttp</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_custom_headers"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_custom_headers">[docs]</a>    <span class="k">def</span> <span class="nf">test_custom_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">test_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;X-Test-Header&#39;</span><span class="p">:</span> <span class="s">&#39;TEST&#39;</span><span class="p">}</span>
+        <span class="n">base_headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">headers</span>
+        <span class="n">base_headers</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">test_headers</span><span class="p">)</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;headers&#39;</span><span class="p">:</span> <span class="n">test_headers</span><span class="p">}</span>
+        <span class="n">make_request</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">MakeRequest</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">base_headers</span><span class="p">,</span> <span class="n">make_request</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_enable_debug"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_enable_debug">[docs]</a>    <span class="k">def</span> <span class="nf">test_enable_debug</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;debug&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+        <span class="n">rest</span><span class="o">.</span><span class="n">MakeRequest</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">debug_level</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">httplib</span><span class="o">.</span><span class="n">HTTPConnection</span><span class="o">.</span><span class="n">debuglevel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">debug_level</span><span class="p">)</span>
+        <span class="n">rest</span><span class="o">.</span><span class="n">httplib</span><span class="o">.</span><span class="n">HTTPConnection</span><span class="o">.</span><span class="n">debuglevel</span> <span class="o">=</span> <span class="mi">0</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_timeout_set"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_timeout_set">[docs]</a>    <span class="k">def</span> <span class="nf">test_timeout_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="mi">120</span><span class="p">}</span>
+        <span class="n">make_request</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">MakeRequest</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">make_request</span><span class="o">.</span><span class="n">request_kwargs</span><span class="p">[</span><span class="s">&#39;timeout&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s">&#39;timeout&#39;</span><span class="p">],</span> <span class="n">timeout</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_report_error"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_report_error">[docs]</a>    <span class="k">def</span> <span class="nf">test_report_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span>
+            <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">_report_error</span><span class="p">,</span>
+            <span class="s">&#39;TEST&#39;</span><span class="p">,</span>
+            <span class="s">&#39;Failure&#39;</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_get_request"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_get_request">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">get</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_get_request_headers"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_get_request_headers">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_request_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">get</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;test1&#39;</span><span class="p">:</span> <span class="s">&#39;test1&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_get_request_kwargs"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_get_request_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_request_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">get</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">get</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_head_request"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_head_request">[docs]</a>    <span class="k">def</span> <span class="nf">test_head_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">head</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_head_request_headers"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_head_request_headers">[docs]</a>    <span class="k">def</span> <span class="nf">test_head_request_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">head</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;test1&#39;</span><span class="p">:</span> <span class="s">&#39;test1&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_head_request_kwargs"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_head_request_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">test_head_request_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">head</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_put_request"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_put_request">[docs]</a>    <span class="k">def</span> <span class="nf">test_put_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">put</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">put</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_put_request_headers"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_put_request_headers">[docs]</a>    <span class="k">def</span> <span class="nf">test_put_request_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">put</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">put</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;test1&#39;</span><span class="p">:</span> <span class="s">&#39;test1&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_put_request_kwargs"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_put_request_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">test_put_request_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">put</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">put</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_put_request_body"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_put_request_body">[docs]</a>    <span class="k">def</span> <span class="nf">test_put_request_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">put</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">put</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s">&#39;TestBody&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_delete_request"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_delete_request">[docs]</a>    <span class="k">def</span> <span class="nf">test_delete_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">delete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">delete</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_delete_request_headers"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_delete_request_headers">[docs]</a>    <span class="k">def</span> <span class="nf">test_delete_request_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">delete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">delete</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;test1&#39;</span><span class="p">:</span> <span class="s">&#39;test1&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_delete_request_kwargs"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_delete_request_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">test_delete_request_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">delete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">delete</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_post_request"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_post_request">[docs]</a>    <span class="k">def</span> <span class="nf">test_post_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">post</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_post_request_headers"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_post_request_headers">[docs]</a>    <span class="k">def</span> <span class="nf">test_post_request_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">post</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;test1&#39;</span><span class="p">:</span> <span class="s">&#39;test1&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_post_request_kwargs"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_post_request_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">test_post_request_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">post</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_post_request_body"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_post_request_body">[docs]</a>    <span class="k">def</span> <span class="nf">test_post_request_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">post</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">post</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s">&#39;TestBody&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_patch_request"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_patch_request">[docs]</a>    <span class="k">def</span> <span class="nf">test_patch_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">patch</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_patch_request_headers"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_patch_request_headers">[docs]</a>    <span class="k">def</span> <span class="nf">test_patch_request_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">patch</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;test1&#39;</span><span class="p">:</span> <span class="s">&#39;test1&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_patch_request_kwargs"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_patch_request_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">test_patch_request_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">patch</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_patch_request_body"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_patch_request_body">[docs]</a>    <span class="k">def</span> <span class="nf">test_patch_request_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">patch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">patch</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s">&#39;TestBody&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_option_request"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_option_request">[docs]</a>    <span class="k">def</span> <span class="nf">test_option_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">option</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">option</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_option_request_headers"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_option_request_headers">[docs]</a>    <span class="k">def</span> <span class="nf">test_option_request_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">option</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">option</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;test1&#39;</span><span class="p">:</span> <span class="s">&#39;test1&#39;</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_option_request_kwargs"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_option_request_kwargs">[docs]</a>    <span class="k">def</span> <span class="nf">test_option_request_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">mock</span><span class="o">.</span><span class="n">patch</span><span class="p">(</span><span class="s">&#39;cloudlib.http.rest.requests&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">mock_request</span><span class="p">:</span>
+            <span class="n">mock_request</span><span class="o">.</span><span class="n">option</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fakehttp</span><span class="o">.</span><span class="n">option</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_request_failure"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_request_failure">[docs]</a>    <span class="k">def</span> <span class="nf">test_request_failure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span>
+            <span class="n">requests</span><span class="o">.</span><span class="n">RequestException</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">make_req</span><span class="o">.</span><span class="n">_request</span><span class="p">,</span>
+            <span class="s">&#39;BadMethod&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">url</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_parse_url_double_slash_url"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_parse_url_double_slash_url">[docs]</a>    <span class="k">def</span> <span class="nf">test_parse_url_double_slash_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">parse_url</span><span class="p">(</span><span class="s">&#39;//example.com&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">url</span><span class="p">),</span> <span class="n">rest</span><span class="o">.</span><span class="n">urlparse</span><span class="o">.</span><span class="n">ParseResult</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="s">&#39;http&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_parse_url_http_url"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_parse_url_http_url">[docs]</a>    <span class="k">def</span> <span class="nf">test_parse_url_http_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">parse_url</span><span class="p">(</span><span class="s">&#39;http://example.com&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">url</span><span class="p">),</span> <span class="n">rest</span><span class="o">.</span><span class="n">urlparse</span><span class="o">.</span><span class="n">ParseResult</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="s">&#39;http&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_parse_url_https_url"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_parse_url_https_url">[docs]</a>    <span class="k">def</span> <span class="nf">test_parse_url_https_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">parse_url</span><span class="p">(</span><span class="s">&#39;https://example.com&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">url</span><span class="p">),</span> <span class="n">rest</span><span class="o">.</span><span class="n">urlparse</span><span class="o">.</span><span class="n">ParseResult</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="s">&#39;https&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestHttpMakeRequest.test_html_encode_url"><a class="viewcode-back" href="../../../cloudlib.tests.html#cloudlib.tests.test_http_rest.TestHttpMakeRequest.test_html_encode_url">[docs]</a>    <span class="k">def</span> <span class="nf">test_html_encode_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">test_path</span> <span class="o">=</span> <span class="s">&#39;this</span><span class="si">%20i</span><span class="s">s%20a%20test&#39;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">html_encode</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s">&#39;this is a test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">test_path</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../cloudlib.html" >cloudlib</a> &raquo;</li>
+          <li><a href="../tests.html" >cloudlib.tests</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Kevin Carter.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

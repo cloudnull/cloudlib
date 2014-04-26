@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cloudlib.http package &mdash; cloudlib 0.0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="cloudlib 0.0.1 documentation" href="index.html" />
+    <link rel="up" title="cloudlib package" href="cloudlib.html" />
+    <link rel="next" title="cloudlib.logger package" href="cloudlib.logger.html" />
+    <link rel="prev" title="cloudlib.config_file package" href="cloudlib.config_file.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cloudlib.logger.html" title="cloudlib.logger package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cloudlib.config_file.html" title="cloudlib.config_file package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="cloudlib.html" accesskey="U">cloudlib package</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cloudlib-http-package">
+<h1>cloudlib.http package<a class="headerlink" href="#cloudlib-http-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-cloudlib.http.rest">
+<span id="cloudlib-http-rest-module"></span><h2>cloudlib.http.rest module<a class="headerlink" href="#module-cloudlib.http.rest" title="Permalink to this headline">¶</a></h2>
+<p>Example Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">make_req</span> <span class="o">=</span> <span class="n">MakeRequest</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_req</span> <span class="o">=</span> <span class="n">make_req</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;https://api.github.com/orgs/openstack&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="cloudlib.http.rest.MakeRequest">
+<em class="property">class </em><tt class="descclassname">cloudlib.http.rest.</tt><tt class="descname">MakeRequest</tt><big>(</big><em>config=None</em>, <em>log_name='cloudlib.http.rest'</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#MakeRequest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.MakeRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="cloudlib.http.rest.MakeRequest.delete">
+<tt class="descname">delete</tt><big>(</big><em>url</em>, <em>headers=None</em>, <em>kwargs=None</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#MakeRequest.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.MakeRequest.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a DELETE request.</p>
+<p>To make a DELETE request pass, <tt class="docutils literal"><span class="pre">url</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></li>
+<li><strong>headers</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+<li><strong>kwargs</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cloudlib.http.rest.MakeRequest.get">
+<tt class="descname">get</tt><big>(</big><em>url</em>, <em>headers=None</em>, <em>kwargs=None</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#MakeRequest.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.MakeRequest.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a GET request.</p>
+<p>To make a GET request pass, <tt class="docutils literal"><span class="pre">url</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></li>
+<li><strong>headers</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+<li><strong>kwargs</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cloudlib.http.rest.MakeRequest.head">
+<tt class="descname">head</tt><big>(</big><em>url</em>, <em>headers=None</em>, <em>kwargs=None</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#MakeRequest.head"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.MakeRequest.head" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a HEAD request.</p>
+<p>To make a HEAD request pass, <tt class="docutils literal"><span class="pre">url</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></li>
+<li><strong>headers</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+<li><strong>kwargs</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cloudlib.http.rest.MakeRequest.option">
+<tt class="descname">option</tt><big>(</big><em>url</em>, <em>headers=None</em>, <em>kwargs=None</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#MakeRequest.option"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.MakeRequest.option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a OPTION request.</p>
+<p>To make a OPTION request pass, <tt class="docutils literal"><span class="pre">url</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></li>
+<li><strong>headers</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+<li><strong>kwargs</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cloudlib.http.rest.MakeRequest.patch">
+<tt class="descname">patch</tt><big>(</big><em>url</em>, <em>headers=None</em>, <em>body=None</em>, <em>kwargs=None</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#MakeRequest.patch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.MakeRequest.patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a PATCH request.</p>
+<p>To make a PATCH request pass, <tt class="docutils literal"><span class="pre">url</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></li>
+<li><strong>headers</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+<li><strong>body</strong> &#8211; <tt class="docutils literal"><span class="pre">object</span></tt></li>
+<li><strong>kwargs</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cloudlib.http.rest.MakeRequest.post">
+<tt class="descname">post</tt><big>(</big><em>url</em>, <em>headers=None</em>, <em>body=None</em>, <em>kwargs=None</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#MakeRequest.post"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.MakeRequest.post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a POST request.</p>
+<p>To make a POST request pass, <tt class="docutils literal"><span class="pre">url</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></li>
+<li><strong>headers</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+<li><strong>body</strong> &#8211; <tt class="docutils literal"><span class="pre">object</span></tt></li>
+<li><strong>kwargs</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="cloudlib.http.rest.MakeRequest.put">
+<tt class="descname">put</tt><big>(</big><em>url</em>, <em>headers=None</em>, <em>body=None</em>, <em>kwargs=None</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#MakeRequest.put"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.MakeRequest.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a PUT request.</p>
+<p>To make a PUT request pass, <tt class="docutils literal"><span class="pre">url</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>url</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></li>
+<li><strong>headers</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+<li><strong>body</strong> &#8211; <tt class="docutils literal"><span class="pre">object</span></tt></li>
+<li><strong>kwargs</strong> &#8211; <tt class="docutils literal"><span class="pre">dict</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cloudlib.http.rest.html_encode">
+<tt class="descclassname">cloudlib.http.rest.</tt><tt class="descname">html_encode</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#html_encode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.html_encode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an HTML encoded Path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; <tt class="docutils literal"><span class="pre">str</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">str</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="cloudlib.http.rest.parse_url">
+<tt class="descclassname">cloudlib.http.rest.</tt><tt class="descname">parse_url</tt><big>(</big><em>url</em><big>)</big><a class="reference internal" href="_modules/cloudlib/http/rest.html#parse_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#cloudlib.http.rest.parse_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a clean URL. Remove the prefix for the Auth URL if Found.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>url</strong> &#8211; </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return aurl:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-cloudlib.http">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cloudlib.http" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">cloudlib.http package</a><ul>
+<li><a class="reference internal" href="#module-cloudlib.http.rest">cloudlib.http.rest module</a></li>
+<li><a class="reference internal" href="#module-cloudlib.http">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cloudlib.config_file.html"
+                        title="previous chapter">cloudlib.config_file package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cloudlib.logger.html"
+                        title="next chapter">cloudlib.logger package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/cloudlib.http.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="cloudlib.logger.html" title="cloudlib.logger package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cloudlib.config_file.html" title="cloudlib.config_file package"
+             >previous</a> |</li>
+        <li><a href="index.html">Cloudnull&#39;s Cloudlib</a> &raquo;</li>
+          <li><a href="cloudlib.html" >cloudlib package</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Kevin Carter.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
