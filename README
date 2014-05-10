@@ -22,6 +22,18 @@ general purpose enough I'm going to put it in library which I'll use throughout
 my applications as I develop them.
 
 
+Features
+--------
+
+* Argument parsing for CLI applications
+* HTTP requests
+* Universal logging
+* Outbound email messaging
+* Linux package installation
+* Configuration file parsing
+* Shell commands
+* Various utilities
+
 
 Info
 ----
