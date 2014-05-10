@@ -32,3 +32,28 @@ Info
 
 
 Pull requests are always welcome.
+
+
+
+Building the Docs
+-----------------
+
+Clone the repo, navigate to the docs directory and execute the following.
+
+.. code-block:: bash
+
+    sphinx-build -b html -d _build/doctrees   . _build/html
+
+
+Once complete the docs will be in the `docs/_build/html` directory.
+
+
+
+Testing
+-------
+
+To run tests, go to the root directory of the ``cloudlib`` module and execute
+the command `tox`. this will automatically run all tests for Python 2.6 - 2.7
+
+Doc tests are also used in this library. To run doc tests, go to the docs
+directory in this root of this module and execute `make doctest`.

@@ -71,21 +71,23 @@ def returnstring(fmt=None, datefmt=None):
 
 class Logger(object):
     def __init__(self, name=None):
+        self.name = name
         self.debug = self._debug
         self.info = self._info
         self.error = self._error
         self.warn = self._warn
         self.fatal = self._fatal
+        self.handlers = []
 
-    def addHandler(self, *args):
-        pass
+    def addHandler(self, handler):
+        self.handlers.append(handler)
 
     def setLevel(self, *args):
         pass
 
     def _check(self, *args):
-        if not isinstance(args[0], str):
-            raise AttributeError('No string passed to logger')
+        if not args[0]:
+            raise AttributeError('Nothing passed to logger')
 
     def _debug(self, *args):
         return self._check(*args)
@@ -173,3 +175,13 @@ false_value = False
 string_value = string
 integer_value = 1
 """
+
+
+class FakePopen(object):
+    """Fake Shell Commands."""
+    def __init__(self, return_code=0, *args, **kwargs):
+        self.returncode = return_code
+
+    @staticmethod
+    def communicate():
+        return 'stdout', 'stderr'

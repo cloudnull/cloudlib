@@ -7,6 +7,17 @@
 # details (see GNU General Public License).
 # http://www.gnu.org/licenses/gpl.html
 # =============================================================================
+__author__ = 'Kevin Carter'
+__contact__ = 'Kevin Carter'
+__email__ = 'kevin@cloudnull.com'
+__copyright__ = '2014 All Rights Reserved'
+__license__ = 'GPLv3+'
+__date__ = '2014-04-20'
+__version__ = '0.0.3'
+__status__ = 'Production'
+__appname__ = 'cloudlib'
+__description__ = 'general purpose library for in application use'
+__url__ = 'https://github.com/cloudnull/cloudlib'
 
 
 class MissingConfig(Exception):
