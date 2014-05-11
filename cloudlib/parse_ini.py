@@ -14,7 +14,11 @@
 >>> # key = value
 
 >>> from cloudlib import parse_ini
->>> config = parse_ini.ConfigurationSetup(name='example')
+>>> # Set the name of our configuration file
+>>> config = parse_ini.ConfigurationSetup()
+>>> # Search for the configuration file
+>>> config.load_config(name='example')
+>>> # Retrieve sections from the configuration file
 >>> default_args = config.config_args(section='default')
 >>> type(default_args)
 <type 'dict'>
@@ -31,19 +35,18 @@ from cloudlib import logger
 
 class ConfigurationSetup(object):
 
-    def __init__(self, name, log_name=__name__):
+    def __init__(self, log_name=__name__):
         """Parse values in a given configuration file.
 
-        :param name: ``str``
         :param log_name: ``str`` This is used to log against an existing log
                                  handler.
         """
         self.log = logger.getLogger(log_name)
-        self.name = name
+        self.name = None
         self.config_file = None
         self.filename = None
 
-    def load_config(self, path=None, home=False, ext='ini'):
+    def load_config(self, name, path=None, home=False, ext='ini'):
         """Return the full path to a configuration file.
 
         This will look for configuration files in the ``full_path``, in
@@ -56,6 +59,7 @@ class ConfigurationSetup(object):
             /home/$USER/.name.ini
             /etc/name/name.ini
 
+        :param name: ``str``
         :param path: ``str``
         :param home: ``bol``
         :param ext: ``str``
@@ -64,6 +68,7 @@ class ConfigurationSetup(object):
 
         opj = os.path.join
 
+        self.name = name
         self.filename = '%s.%s' % (self.name, ext)
 
         if path is not None:
@@ -94,7 +99,7 @@ class ConfigurationSetup(object):
                 'Configuration file [ %s ] was not found.' % self.filename
             )
             self.log.fatal(msg)
-            raise SystemExit(msg)
+            raise IOError(msg)
 
     def check_perms(self, perms='0600,0400'):
         """Check and enforce the permissions of the config file.

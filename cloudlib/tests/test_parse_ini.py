@@ -33,7 +33,7 @@ class TestConfigFileIni(unittest.TestCase):
         self.tempfile = self.tempfile_patched.start()
         self.tempfile.return_value = ('flag', 'file')
 
-        self.config = parse_ini.ConfigurationSetup(name='test')
+        self.config = parse_ini.ConfigurationSetup()
 
     def tearDown(self):
         self.logger_patched.stop()
@@ -42,44 +42,47 @@ class TestConfigFileIni(unittest.TestCase):
         self.tempfile_patched.stop()
 
     def test_sys_config(self):
-        self.config.load_config()
+        self.config.load_config(name='test')
         self.assertEqual(self.config.config_file, '/etc/test/test.ini')
 
     def test_sys_config_path(self):
-        self.config.load_config(path='/test/test/test')
+        self.config.load_config(name='test', path='/test/test/test')
         self.assertEqual(self.config.config_file, '/test/test/test/test.ini')
 
     def test_sys_config_path_ext(self):
-        self.config.load_config(path='/test/test/test', ext='cfg')
+        self.config.load_config(name='test', path='/test/test/test', ext='cfg')
         self.assertEqual(self.config.config_file, '/test/test/test/test.cfg')
 
     def test_sys_config_path_strip_slash(self):
-        self.config.load_config(path='/test/test/test/')
+        self.config.load_config(name='test', path='/test/test/test/')
         self.assertEqual(self.config.config_file, '/test/test/test/test.ini')
 
     def test_sys_config_home(self):
         self.env.return_value = '/home/TestUser'
-        self.config.load_config(home=True)
+        self.config.load_config(name='test', home=True)
         self.assertEqual(self.config.config_file, '/home/TestUser/.test.ini')
 
     def test_sys_config_home_ext(self):
         self.env.return_value = '/home/TestUser'
-        self.config.load_config(home=True, ext='cfg')
+        self.config.load_config(name='test', home=True, ext='cfg')
         self.assertEqual(self.config.config_file, '/home/TestUser/.test.cfg')
 
     def test_sys_config_ext(self):
-        self.config.load_config(ext='cfg')
+        self.config.load_config(name='test', ext='cfg')
         self.assertEqual(self.config.config_file, '/etc/test/test.cfg')
 
     def test_sys_config_path_home_ext(self):
-        self.config.load_config(path='/test/test/test', home=True, ext='cfg')
+        self.config.load_config(
+            name='test', path='/test/test/test', home=True, ext='cfg'
+        )
         self.assertEqual(self.config.config_file, '/test/test/test/test.cfg')
 
     def test_sys_config_not_found(self):
         self.os_path.return_value = False
         self.assertRaises(
             SystemExit,
-            self.config.load_config
+            self.config.load_config,
+            name='test'
         )
 
     def test_sys_config_find_config_success(self):
@@ -92,7 +95,7 @@ class TestConfigFileIni(unittest.TestCase):
     def test_sys_config_find_config_fail(self):
         self.os_path.return_value = False
         self.assertRaises(
-            SystemExit,
+            IOError,
             self.config._find_config,
             'test_file'
         )
