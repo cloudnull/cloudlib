@@ -7,9 +7,12 @@
 # details (see GNU General Public License).
 # http://www.gnu.org/licenses/gpl.html
 # =============================================================================
+import errno
+import hashlib
 import os
 import subprocess
 
+import cloudlib
 from cloudlib import logger
 
 
@@ -83,6 +86,23 @@ class ShellCommands(object):
             self.log.debug(output)
             return output, True
 
+    def mkdir_p(self, path):
+        """Python implementation of `mkdir -p <path>`
+
+        :param path: ``str``
+        """
+        try:
+            if not os.path.isdir(path):
+                os.makedirs(path)
+                self.log.info('Created Directory [ %s ]', path)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(path):
+                pass
+            else:
+                raise OSError(
+                    'The provided path can not be created into a directory.'
+                )
+
     def write_file(self, filename, content):
         """Write a file.
 
@@ -137,3 +157,39 @@ class ShellCommands(object):
         with open(filename, 'rb') as f:
             for line in f.readline():
                 yield line
+
+    def md5_checker(self, md5sum, local_file):
+        """Return True if the local file and the provided `md5sum` are equal.
+
+        If the processed file and the provided md5sum do not match an exception
+        is raised indicating the failure.
+
+        :param md5sum: ``str``
+        :param local_file: ``str``
+        :return: ``bol``
+        """
+        def calc_hash():
+            """Read the hash.
+
+            :return data_hash.read():
+            """
+            return data_hash.read(128 * md5.block_size)
+
+        if os.path.isfile(local_file) is True:
+            md5 = hashlib.md5()
+
+            with open(local_file, 'rb') as data_hash:
+                for chk in iter(calc_hash, ''):
+                    md5.update(chk)
+
+            lmd5sum = md5.hexdigest()
+            if md5sum != lmd5sum:
+                msg = (
+                    'CheckSumm Mis-Match "%s" != "%s" for [ %s ]'
+                    % (md5sum, lmd5sum, local_file)
+                )
+                self.log.error(msg)
+                raise cloudlib.MD5CheckMismatch(msg)
+            else:
+                self.log.info('md5sum verified for [ %s ]', local_file)
+                return True

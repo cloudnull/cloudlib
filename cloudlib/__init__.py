@@ -13,7 +13,7 @@ __email__ = 'kevin@cloudnull.com'
 __copyright__ = '2014 All Rights Reserved'
 __license__ = 'GPLv3+'
 __date__ = '2014-04-20'
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 __status__ = 'Production'
 __appname__ = 'cloudlib'
 __description__ = 'general purpose library for in application use'
@@ -32,4 +32,9 @@ class MissingConfigValue(Exception):
 
 class MessageFailure(Exception):
     """Raise this exception when an application fails processing a message."""
+    pass
+
+
+class MD5CheckMismatch(Exception):
+    """Exception class when the md5 sum of a file is not what is expected."""
     pass

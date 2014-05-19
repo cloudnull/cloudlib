@@ -7,11 +7,12 @@
 # details (see GNU General Public License).
 # http://www.gnu.org/licenses/gpl.html
 # =============================================================================
-
+import io
 import unittest
 
 import mock
 
+import cloudlib
 from cloudlib import shell
 from cloudlib import tests
 
@@ -36,6 +37,43 @@ class TestShell(unittest.TestCase):
         self.logger_patched.stop()
         self.communicate_patched.stop()
         self.mock_open_patch.stop()
+
+    def test_mkdir_dir_not_found(self):
+        with mock.patch('cloudlib.shell.os.path.isdir') as isdir:
+            isdir.return_value = False
+            with mock.patch('cloudlib.shell.os.mkdir') as mkdir:
+                mkdir.return_value = None
+                self.shell.mkdir_p('test_path')
+        self.assertTrue(mkdir.called)
+
+    def test_mkdir_dir_found(self):
+        with mock.patch('cloudlib.shell.os.path.isdir') as isdir:
+            isdir.return_value = True
+            with mock.patch('cloudlib.shell.os.mkdir') as mkdir:
+                mkdir.return_value = None
+                self.shell.mkdir_p('test_path')
+        self.assertTrue(mkdir.called is False)
+
+    def test_md5sum_failure(self):
+        with mock.patch('cloudlib.shell.os.path.isfile') as isfile:
+            isfile.return_value = True
+            self.mock_open.return_value = io.StringIO(u'test')
+            self.assertRaises(
+                cloudlib.MD5CheckMismatch,
+                self.shell.md5_checker,
+                '00000000',
+                'test_file'
+            )
+
+    def test_md5sum_success(self):
+        with mock.patch('cloudlib.shell.os.path.isfile') as isfile:
+            isfile.return_value = True
+            self.mock_open.return_value = io.StringIO(u'test')
+            test_check = self.shell.md5_checker(
+                md5sum='098f6bcd4621d373cade4e832627b4f6',
+                local_file='test_file'
+            )
+            self.assertTrue(test_check)
 
     def test_run_command_success(self):
         self.communicate.return_value = tests.FakePopen()
