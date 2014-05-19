@@ -64,27 +64,27 @@ class TestPackageInstall(unittest.TestCase):
 
     def test_distro_check_debian(self):
         self.linux_distribution.return_value = ['debian']
-        self.assertEqual(self.installer.distro_check(), 'apt')
+        self.assertEqual(package_installer.distro_check(), 'apt')
 
     def test_distro_check_ubuntu(self):
         self.linux_distribution.return_value = ['ubuntu']
-        self.assertEqual(self.installer.distro_check(), 'apt')
+        self.assertEqual(package_installer.distro_check(), 'apt')
 
     def test_distro_check_redhat(self):
         self.linux_distribution.return_value = ['redhat']
-        self.assertEqual(self.installer.distro_check(), 'yum')
+        self.assertEqual(package_installer.distro_check(), 'yum')
 
     def test_distro_check_centos(self):
         self.linux_distribution.return_value = ['centos']
-        self.assertEqual(self.installer.distro_check(), 'yum')
+        self.assertEqual(package_installer.distro_check(), 'yum')
 
     def test_distro_check_suse(self):
         self.linux_distribution.return_value = ['suse']
-        self.assertEqual(self.installer.distro_check(), 'zypper')
+        self.assertEqual(package_installer.distro_check(), 'zypper')
 
     def test_distro_check_exception(self):
         self.linux_distribution.return_value = ['failure']
-        self.assertRaises(AssertionError, self.installer.distro_check)
+        self.assertRaises(AssertionError, package_installer.distro_check)
 
     def test__installer_apt_custom_install_string(self):
         self.installer.distro = 'apt'

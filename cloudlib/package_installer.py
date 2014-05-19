@@ -33,6 +33,23 @@ from cloudlib import shell
 from cloudlib import logger
 
 
+def distro_check():
+    """Return a string containing the distro package manager."""
+    distro_data = platform.linux_distribution()
+    distro = [d.lower() for d in distro_data if d.isalpha()]
+
+    if any(['ubuntu' in distro, 'debian' in distro]) is True:
+        return 'apt'
+    elif any(['centos' in distro, 'redhat' in distro]) is True:
+        return 'yum'
+    elif any(['suse' in distro]) is True:
+        return 'zypper'
+    else:
+        raise AssertionError(
+            'Distro [ %s ] is unsupported.' % distro
+        )
+
+
 class PackageInstaller(object):
 
     def __init__(self, packages_dict, log_name=__name__):
@@ -58,23 +75,6 @@ class PackageInstaller(object):
         }
         self.install_string = None
 
-    @staticmethod
-    def distro_check():
-        """Return a string containing the distro package manager."""
-        distro_data = platform.linux_distribution()
-        distro = [d.lower() for d in distro_data if d.isalpha()]
-
-        if any(['ubuntu' in distro, 'debian' in distro]) is True:
-            return 'apt'
-        elif any(['centos' in distro, 'redhat' in distro]) is True:
-            return 'yum'
-        elif any(['suse' in distro]) is True:
-            return 'zypper'
-        else:
-            raise AssertionError(
-                'Distro [ %s ] is unsupported.' % distro
-            )
-
     def _installer(self, package_list, install_string=None):
         """Install operating system packages for the system.
 
@@ -95,6 +95,6 @@ class PackageInstaller(object):
 
     def install(self):
         """Install packages from the packages_dict."""
-        self.distro = self.distro_check()
+        self.distro = distro_check()
         package_list = self.packages_dict.get(self.distro)
         self._installer(package_list=package_list.get('packages'))
