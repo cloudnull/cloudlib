@@ -13,7 +13,8 @@ import unittest
 
 import mock
 
-from cloudlib import tests, parse_ini
+from cloudlib import tests
+from cloudlib import parse_ini
 
 
 class TestConfigFileIni(unittest.TestCase):
@@ -80,7 +81,7 @@ class TestConfigFileIni(unittest.TestCase):
     def test_sys_config_not_found(self):
         self.os_path.return_value = False
         self.assertRaises(
-            SystemExit,
+            IOError,
             self.config.load_config,
             name='test'
         )
