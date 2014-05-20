@@ -36,7 +36,22 @@ args = {
     },
     'subparsed_args': {
         'subparsed1': {
+            'title': 'SubParser Title',
+            'metavar': 'SubParser Information',
             'help': 'Helpful Information',
+            'subparsed_args': {
+                'nested_subparsed1': {
+                    'title': 'NestedSubParser Title',
+                    'metavar': 'NestedSubParser Information',
+                    'help': 'Helpful Information',
+                    'option1': {
+                        'commands': ['--option1'],
+                        'default': False,
+                        'action': 'store_true',
+                        'help': 'Helpful Information'
+                    }
+                }
+            },
             'optional_args': {
                 'mutually_exclusive': {
                     'some_value': [

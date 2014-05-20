@@ -70,7 +70,7 @@ class PackageInstaller(object):
                    " -o Dpkg::Options:='--force-confold'"
                    " -o Dpkg::Options:='--force-confdef'"
                    " -y install %s",
-            'yum': "yum -y instaall %s",
+            'yum': "yum -y install %s",
             'zypper': "zypper -n install %s"
         }
         self.install_string = None

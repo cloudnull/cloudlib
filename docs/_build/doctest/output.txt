@@ -1,8 +1,42 @@
-Results of doctest builder run on 2014-05-10 23:45:35
+Results of doctest builder run on 2014-05-20 10:28:33
 =====================================================
 
 Document: cloudlib
 ------------------
+**********************************************************************
+File "cloudlib.rst", line 137, in default
+Failed example:
+    parsed_args = args.arg_parser()
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[3]>", line 1, in <module>
+        parsed_args = args.arg_parser()
+      File "/Users/cloudnull/projects/cloudlib/cloudlib/arguments.py", line 292, in arg_parser
+        self._add_sub_args(sub_args=subparsed_args, arg_parser=subpar)
+      File "/Users/cloudnull/projects/cloudlib/cloudlib/arguments.py", line 267, in _add_sub_args
+        add_subparser=True
+      File "/Users/cloudnull/projects/cloudlib/cloudlib/arguments.py", line 241, in _add_sub_args
+        title=subparsed_title, metavar=metavar_title
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/argparse.py", line 1638, in add_subparsers
+        self.error(_('cannot have multiple subparser arguments'))
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/argparse.py", line 2361, in error
+        self.exit(2, _('%s: error: %s\n') % (self.prog, message))
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/argparse.py", line 2349, in exit
+        _sys.exit(status)
+    SystemExit: 2
+**********************************************************************
+File "cloudlib.rst", line 138, in default
+Failed example:
+    type(parsed_args)
+Exception raised:
+    Traceback (most recent call last):
+      File "/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/doctest.py", line 1289, in __run
+        compileflags, 1) in test.globs
+      File "<doctest default[4]>", line 1, in <module>
+        type(parsed_args)
+    NameError: name 'parsed_args' is not defined
 **********************************************************************
 File "cloudlib.rst", line 20, in default
 Failed example:
@@ -16,18 +50,18 @@ Exception raised:
       File "/Users/cloudnull/projects/cloudlib/cloudlib/parse_ini.py", line 84, in load_config
         config_file=opj('/etc', self.name, self.filename)
       File "/Users/cloudnull/projects/cloudlib/cloudlib/parse_ini.py", line 102, in _find_config
-        raise SystemExit(msg)
-    SystemExit: Configuration file [ example.ini ] was not found.
+        raise IOError(msg)
+    IOError: Configuration file [ example.ini ] was not found.
 **********************************************************************
 1 items had failures:
-   1 of  15 in default
+   3 of  15 in default
 15 tests in 1 items.
-14 passed and 1 failed.
-***Test Failed*** 1 failures.
+12 passed and 3 failed.
+***Test Failed*** 3 failures.
 
 Doctest summary
 ===============
    15 tests
-    1 failure in tests
+    3 failures in tests
     0 failures in setup code
     0 failures in cleanup code
