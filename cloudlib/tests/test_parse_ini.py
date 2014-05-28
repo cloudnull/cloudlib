@@ -61,12 +61,12 @@ class TestConfigFileIni(unittest.TestCase):
     def test_sys_config_home(self):
         self.env.return_value = '/home/TestUser'
         self.config.load_config(name='test', home=True)
-        self.assertEqual(self.config.config_file, '/home/TestUser/.test.ini')
+        self.assertEqual(self.config.config_file, '/home/TestUser/test.ini')
 
     def test_sys_config_home_ext(self):
         self.env.return_value = '/home/TestUser'
         self.config.load_config(name='test', home=True, ext='cfg')
-        self.assertEqual(self.config.config_file, '/home/TestUser/.test.cfg')
+        self.assertEqual(self.config.config_file, '/home/TestUser/test.cfg')
 
     def test_sys_config_ext(self):
         self.config.load_config(name='test', ext='cfg')
@@ -84,13 +84,6 @@ class TestConfigFileIni(unittest.TestCase):
             IOError,
             self.config.load_config,
             name='test'
-        )
-
-    def test_sys_config_find_config_success(self):
-        self.os_path.return_value = True
-        self.assertEqual(
-            self.config._find_config('test_file'),
-            'test_file'
         )
 
     def test_sys_config_find_config_fail(self):

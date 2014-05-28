@@ -71,35 +71,32 @@ class ConfigurationSetup(object):
         self.name = name
         self.filename = '%s.%s' % (self.name, ext)
 
+        checks = []
         if path is not None:
-            self.config_file = self._find_config(
-                config_file=opj(path.rstrip(os.sep), self.filename)
-            )
+            checks.append(opj(path.rstrip(os.sep), self.filename))
         elif home is True:
-            self.config_file = self._find_config(
-                config_file=opj(os.getenv('HOME'), '.%s' % self.filename)
-            )
+            checks.append(opj(os.getenv('HOME'), '%s' % self.filename))
         else:
-            self.config_file = self._find_config(
-                config_file=opj('/etc', self.name, self.filename)
-            )
+            checks.append(opj('/etc', self.name, self.filename))
+
+        for check in checks:
+            if os.path.exists(check):
+                self.config_file = check
+                break
+        else:
+            self._find_config(name)
 
     def _find_config(self, config_file):
-        """Return the full path to a known configuration file.
+        """This method will check if the configuration file "exist"
 
-        This method will check if the configuration file "exist", if it does
-        NOT then the method will bail calling the system to Exit.
+        If it does NOT then the method will bail calling an IOError.
 
+        :param config_file: ``str``
         :return: ``str``
         """
-        if os.path.exists(config_file):
-            return config_file
-        else:
-            msg = (
-                'Configuration file [ %s ] was not found.' % self.filename
-            )
-            self.log.fatal(msg)
-            raise IOError(msg)
+        msg = ('Configuration file [ %s ] was not found.' % self.filename)
+        self.log.fatal(msg)
+        raise IOError(msg)
 
     def check_perms(self, perms='0600,0400'):
         """Check and enforce the permissions of the config file.

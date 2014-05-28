@@ -30,21 +30,6 @@
 ...     'subparsed_args': {
 ...         'subparsed1': {
 ...             'help': 'Helpful Information',
-...             'subparsed_args': {
-...                 'title': 'Nested SubParser Title',
-...                 'metavar': 'Nested SubParser Information',
-...                 'nested_subparsed1': {
-...                     'help': 'Helpful Information',
-...                     'optional_args': {
-...                         'option1': {
-...                             'commands': ['--option1'],
-...                             'default': False,
-...                             'action': 'store_true',
-...                             'help': 'Helpful Information'
-...                         }
-...                     }
-...                 }
-...             },
 ...             'optional_args': {
 ...                 'mutually_exclusive': {
 ...                     'some_value': [
@@ -183,9 +168,9 @@ class ArgumentParserator(object):
         conf_file = known_args.system_config
         if conf_file is not None:
             file_name = os.path.basename(conf_file)
-            config = parse_ini.ConfigurationSetup()
+            config = parse_ini.ConfigurationSetup(name=file_name)
             path_dir = os.path.dirname(conf_file)
-            config.load_config(path=path_dir, name=file_name)
+            config.load_config(path=path_dir)
             config_args = config.config_args(section='default')
             known_args.__dict__.update(config_args)
 
@@ -205,72 +190,6 @@ class ArgumentParserator(object):
 
         return parser, subparser, remaining_argv
 
-    def _add_sub_args(self, sub_args, arg_parser, add_subparser=False):
-        for argument in sub_args.keys():
-            _arg = sub_args[argument]
-
-            # Grab Optional Arguments dict
-            if 'optional_args' in _arg:
-                optional_args = _arg.pop('optional_args')
-            else:
-                optional_args = None
-
-            # Grab Subparser Arguments dict
-            if 'subparsed_args' in _arg:
-                subparsed_args = _arg.pop('subparsed_args')
-
-                if 'title' in _arg:
-                    subparsed_title = _arg.pop('title')
-                else:
-                    subparsed_title = None
-
-                if 'metavar' in _arg:
-                    metavar_title = _arg.pop('metavar')
-                else:
-                    metavar_title = None
-
-            else:
-                subparsed_args = None
-                subparsed_title = None
-                metavar_title = None
-
-            if add_subparser is True:
-                _sub_action = arg_parser.add_subparsers(
-                    title=subparsed_title, metavar=metavar_title
-                )
-
-                if 'help' in _arg:
-                    help_string = _arg.pop('help')
-                else:
-                    help_string = None
-
-                action = _sub_action.add_parser(
-                    argument, help=help_string
-                )
-
-                self._add_opt_argument(
-                    opt_args=_arg, arg_parser=action
-                )
-            else:
-                action = arg_parser.add_parser(argument, **_arg)
-
-            # Create a new Argument parser
-            action.set_defaults(command=argument)
-
-            # Load all subparser arguments
-            if subparsed_args is not None:
-                self._add_sub_args(
-                    sub_args=subparsed_args,
-                    arg_parser=action,
-                    add_subparser=True
-                )
-
-            # Load all optional arguments
-            if optional_args is not None:
-                self._add_opt_argument(
-                    opt_args=optional_args, arg_parser=action
-                )
-
     def arg_parser(self, passed_args=None):
         """Setup argument Parsing.
 
@@ -287,7 +206,23 @@ class ArgumentParserator(object):
 
         subparsed_args = self.arguments.get('subparsed_args')
         if subparsed_args:
-            self._add_sub_args(sub_args=subparsed_args, arg_parser=subpar)
+            for argument in subparsed_args.keys():
+                _arg = subparsed_args[argument]
+                if 'optional_args' in _arg:
+                    optional_args = _arg.pop('optional_args')
+                else:
+                    optional_args = None
+
+                action = subpar.add_parser(
+                    argument,
+                    **_arg
+                )
+                action.set_defaults(command=argument)
+
+                if optional_args is not None:
+                    self._add_opt_argument(
+                        opt_args=optional_args, arg_parser=action
+                    )
 
         positional_args = self.arguments.get('positional_args')
         if positional_args:
