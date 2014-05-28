@@ -92,7 +92,7 @@ class LogSetup(object):
             )
             self.set_handler(log, handler=file_handler)
 
-        if enable_stream is True:
+        if enable_stream is True or self.debug_logging is True:
             stream_handler = logging.StreamHandler()
             self.set_handler(log, handler=stream_handler)
 

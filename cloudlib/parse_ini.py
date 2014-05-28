@@ -156,10 +156,7 @@ class ConfigurationSetup(object):
                     value = utils.is_int(value=value)
                 args[name] = value
         except Exception as exp:
-            self.log.error(
-                'Failure Reading the configuration file section [ %s ].'
-                ' Error: %s', section, exp
-            )
+            self.log.warn('Section: [ %s ] Message: "%s"', section, exp)
             return {}
         else:
             return args
