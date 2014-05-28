@@ -55,6 +55,8 @@ class ShellCommands(object):
         :param execute: ``str``
         :param return_code: ``int``
         """
+        self.log.info('Command: [ %s ]', command)
+
         if env is None:
             env = os.environ
 
@@ -63,8 +65,10 @@ class ShellCommands(object):
         else:
             stdout = subprocess.PIPE
 
-        stderr = subprocess.PIPE
+        if return_code is None:
+            return_code = [0]
 
+        stderr = subprocess.PIPE
         process = subprocess.Popen(
             command,
             stdout=stdout,
@@ -76,14 +80,11 @@ class ShellCommands(object):
 
         output, error = process.communicate()
 
-        if return_code is None:
-            return_code = [0]
-
         if process.returncode not in return_code:
-            self.log.error(output)
+            self.log.debug('Command Output: %s, Error Msg: %s', output, error)
             return error, False
         else:
-            self.log.debug(output)
+            self.log.debug('Command Output: %s', output)
             return output, True
 
     def mkdir_p(self, path):
