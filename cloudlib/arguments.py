@@ -15,6 +15,12 @@
 
 >>> from cloudlib import arguments
 >>> arguments_dict = {
+...     'shared_args': {
+...         'shared_option1': {
+...             'commands': ['--shared-option1'],
+...             'help': 'Helpful Information'
+...         }
+...     },
 ...     'optional_args': {
 ...         'option1': {
 ...             'commands': ['--option1'],
@@ -30,6 +36,7 @@
 ...     'subparsed_args': {
 ...         'subparsed1': {
 ...             'help': 'Helpful Information',
+...             'shared_args': ['shared_option1'],
 ...             'optional_args': {
 ...                 'mutually_exclusive': {
 ...                     'some_value': [
@@ -213,11 +220,26 @@ class ArgumentParserator(object):
                 else:
                     optional_args = None
 
+                if 'shared_args' in _arg:
+                    shared_args = _arg.pop('shared_args')
+                else:
+                    shared_args = None
+
                 action = subpar.add_parser(
                     argument,
                     **_arg
                 )
                 action.set_defaults(command=argument)
+
+                if shared_args is not None:
+                    load_shared_arg = self.arguments.get('shared_args')
+                    for shared_arg in shared_args:
+                        self._add_opt_argument(
+                            opt_args={
+                                shared_arg: load_shared_arg.get(shared_arg)
+                            },
+                            arg_parser=action
+                        )
 
                 if optional_args is not None:
                     self._add_opt_argument(
