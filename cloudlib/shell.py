@@ -159,7 +159,7 @@ class ShellCommands(object):
             for line in f.readline():
                 yield line
 
-    def md5_checker(self, md5sum, local_file):
+    def md5_checker(self, md5sum, local_file=None, file_object=None):
         """Return True if the local file and the provided `md5sum` are equal.
 
         If the processed file and the provided md5sum do not match an exception
@@ -167,6 +167,7 @@ class ShellCommands(object):
 
         :param md5sum: ``str``
         :param local_file: ``str``
+        :param file_object: ``BytesIO``
         :return: ``bol``
         """
         def calc_hash():
@@ -174,14 +175,19 @@ class ShellCommands(object):
 
             :return data_hash.read():
             """
-            return data_hash.read(128 * md5.block_size)
+            return file_object.read(128 * md5.block_size)
 
-        if os.path.isfile(local_file) is True:
+        if (local_file and os.path.isfile(local_file)) is True or file_object:
             md5 = hashlib.md5()
 
-            with open(local_file, 'rb') as data_hash:
-                for chk in iter(calc_hash, ''):
-                    md5.update(chk)
+            if not file_object:
+                file_object = open(local_file, 'rb')
+
+            for chk in iter(calc_hash, ''):
+                md5.update(chk)
+            else:
+                if not file_object:
+                    file_object.close()
 
             lmd5sum = md5.hexdigest()
             if md5sum != lmd5sum:
@@ -194,3 +200,4 @@ class ShellCommands(object):
             else:
                 self.log.info('md5sum verified for [ %s ]', local_file)
                 return True
+

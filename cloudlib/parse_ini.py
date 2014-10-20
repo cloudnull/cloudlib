@@ -46,7 +46,7 @@ class ConfigurationSetup(object):
         self.config_file = None
         self.filename = None
 
-    def load_config(self, name, path=None, home=False, ext='ini'):
+    def load_config(self, name=None, path=None, home=False, ext='ini'):
         """Return the full path to a configuration file.
 
         This will look for configuration files in the ``full_path``, in

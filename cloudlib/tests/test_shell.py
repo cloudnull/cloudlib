@@ -62,7 +62,17 @@ class TestShell(unittest.TestCase):
                 cloudlib.MD5CheckMismatch,
                 self.shell.md5_checker,
                 '00000000',
-                'test_file'
+                local_file='test_file'
+            )
+
+    def test_md5sum_blockio_failure(self):
+        with mock.patch('cloudlib.shell.os.path.isfile') as isfile:
+            isfile.return_value = True
+            self.assertRaises(
+                cloudlib.MD5CheckMismatch,
+                self.shell.md5_checker,
+                '00000000',
+                file_object=io.BytesIO(b'test')
             )
 
     def test_md5sum_success(self):
@@ -72,6 +82,15 @@ class TestShell(unittest.TestCase):
             test_check = self.shell.md5_checker(
                 md5sum='098f6bcd4621d373cade4e832627b4f6',
                 local_file='test_file'
+            )
+            self.assertTrue(test_check)
+
+    def test_md5sum_blockio_success(self):
+        with mock.patch('cloudlib.shell.os.path.isfile') as isfile:
+            isfile.return_value = True
+            test_check = self.shell.md5_checker(
+                md5sum='098f6bcd4621d373cade4e832627b4f6',
+                file_object=io.BytesIO(b'test')
             )
             self.assertTrue(test_check)
 

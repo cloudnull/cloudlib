@@ -39,10 +39,23 @@
 ...             'shared_args': ['shared_option1'],
 ...             'optional_args': {
 ...                 'mutually_exclusive': {
-...                     'some_value': [
-...                         'option1',
-...                         'option2'
-...                     ]
+...                     'some_name': {
+...                         'text': 'some description',
+...                         'required': False
+...                         'group': [
+...                             'option1',
+...                             'option2'
+...                         ]
+...                     }
+...                 },
+...                 'groups': {
+...                     'some_name': {
+...                         'text': 'some description',
+...                         'group': [
+...                             'other_option1',
+...                             'other_option2'
+...                         ]
+...                     }
 ...                 },
 ...                 'option1': {
 ...                     'commands': ['--option1'],
@@ -61,6 +74,12 @@
 ...                     'metavar': '[STRING]',
 ...                     'type': str,
 ...                     'help': 'Helpful Information'
+...                 },
+...                 'other_option2': {
+...                     'commands': ['--other-option4'],
+...                     'metavar': '[STRING]',
+...                     'type': str,
+...                     'help': 'Helpful Information'
 ...                 }
 ...             }
 ...         }
@@ -76,6 +95,9 @@ import argparse
 import os
 
 from cloudlib import parse_ini
+
+
+PARENT_ARGS = dict()
 
 
 class ArgumentParserator(object):
@@ -121,30 +143,68 @@ class ArgumentParserator(object):
         self.description = description
         self.arguments = arguments_dict
 
+    @staticmethod
+    def _add_arg(parser, value_dict):
+        if value_dict is None:
+            raise ValueError('value can not be None.')
+
+        _opt_arg = value_dict.copy()
+        parser.add_argument(
+            *_opt_arg.pop('commands'),
+            **_opt_arg
+        )
+
+    def _add_group(self, parser, groups, option_args):
+        for k, v in groups.iteritems():
+            group_text = v.pop('text', None)
+            group_parser = parser.add_argument_group(group_text)
+            _groups = v.pop('group', list())
+            for item in _groups:
+                self._add_arg(
+                    parser=group_parser,
+                    value_dict=option_args.pop(item)
+                )
+
+    def _add_mutually_exclusive_group(self, parser, groups, option_args):
+        for k, v in groups.iteritems():
+            group_text = v.pop('text', None)
+            group_parser = parser.add_argument_group(group_text)
+            ex_group_parser = group_parser.add_mutually_exclusive_group(
+                required=v.pop('required', False)
+            )
+            for ex_arg in v.get('group', list()):
+                ex_group = option_args.pop(ex_arg)
+                if 'required' in ex_group:
+                    ex_group.pop('required')
+
+                self._add_arg(parser=ex_group_parser, value_dict=ex_group)
+
     def _add_opt_argument(self, opt_args, arg_parser):
         """Add an argument to an instantiated parser.
 
         :param opt_args: ``dict``
         :param arg_parser: ``object``
         """
-        if 'mutually_exclusive' in opt_args:
-            exclusive_args = opt_args.pop('mutually_exclusive')
-            for ex_args in exclusive_args.keys():
-                ex_group = arg_parser.add_mutually_exclusive_group()
-                ex_dict = {}
-                for ex_arg in exclusive_args[ex_args]:
-                    ex_dict[ex_arg] = opt_args.pop(ex_arg)
-                else:
-                    self._add_opt_argument(
-                        opt_args=ex_dict, arg_parser=ex_group
-                    )
+        option_args = opt_args.copy()
 
-        for opt_arg in opt_args.keys():
-            _opt_arg = opt_args[opt_arg]
-            arg_parser.add_argument(
-                *_opt_arg.pop('commands'),
-                **_opt_arg
+        groups = option_args.pop('groups', None)
+        if groups:
+            self._add_group(
+                parser=arg_parser,
+                groups=groups,
+                option_args=option_args
             )
+
+        exclusive_args = option_args.pop('mutually_exclusive', None)
+        if exclusive_args:
+            self._add_mutually_exclusive_group(
+                parser=arg_parser,
+                groups=exclusive_args,
+                option_args=option_args
+            )
+
+        for k, v in option_args.iteritems():
+            self._add_arg(parser=arg_parser, value_dict=v)
 
     def _setup_parser(self):
         """Setup a configuration parser.
@@ -175,7 +235,7 @@ class ArgumentParserator(object):
         conf_file = known_args.system_config
         if conf_file is not None:
             file_name = os.path.basename(conf_file)
-            config = parse_ini.ConfigurationSetup(name=file_name)
+            config = parse_ini.ConfigurationSetup(log_name=file_name)
             path_dir = os.path.dirname(conf_file)
             config.load_config(path=path_dir)
             config_args = config.config_args(section='default')
@@ -192,9 +252,9 @@ class ArgumentParserator(object):
             self.detail = '%s\n' % self.detail
 
         subparser = parser.add_subparsers(
-            title=self.title, metavar=self.detail
+            title=self.title,
+            metavar=self.detail
         )
-
         return parser, subparser, remaining_argv
 
     def arg_parser(self, passed_args=None):
@@ -206,6 +266,11 @@ class ArgumentParserator(object):
         :return: ``dict``
         """
         parser, subpar, remaining_argv = self._setup_parser()
+        if not isinstance(passed_args, list):
+            passed_args = list()
+
+        # Extend the passed args with the remaining parsed args
+        passed_args.extend(remaining_argv)
 
         optional_args = self.arguments.get('optional_args')
         if optional_args:
@@ -213,35 +278,25 @@ class ArgumentParserator(object):
 
         subparsed_args = self.arguments.get('subparsed_args')
         if subparsed_args:
-            for argument in subparsed_args.keys():
-                _arg = subparsed_args[argument]
-                if 'optional_args' in _arg:
-                    optional_args = _arg.pop('optional_args')
+            for argument, value in subparsed_args.iteritems():
+                if 'optional_args' in value:
+                    optional_args = value.pop('optional_args')
                 else:
-                    optional_args = None
+                    optional_args = dict()
 
-                if 'shared_args' in _arg:
-                    shared_args = _arg.pop('shared_args')
-                else:
-                    shared_args = None
+                if 'shared_args' in value:
+                    set_shared_args = self.arguments.get('shared_args')
+                    _shared_args = value.pop('shared_args', list())
+                    for shared_arg in _shared_args:
+                        optional_args[shared_arg] = set_shared_args[shared_arg]
 
                 action = subpar.add_parser(
                     argument,
-                    **_arg
+                    **value
                 )
-                action.set_defaults(command=argument)
+                action.set_defaults(parsed_command=argument)
 
-                if shared_args is not None:
-                    load_shared_arg = self.arguments.get('shared_args')
-                    for shared_arg in shared_args:
-                        self._add_opt_argument(
-                            opt_args={
-                                shared_arg: load_shared_arg.get(shared_arg)
-                            },
-                            arg_parser=action
-                        )
-
-                if optional_args is not None:
+                if optional_args:
                     self._add_opt_argument(
                         opt_args=optional_args, arg_parser=action
                     )
@@ -255,13 +310,6 @@ class ArgumentParserator(object):
                     argument,
                     **_arg
                 )
-
-        if not isinstance(passed_args, list):
-            passed_args = []
-
-        for remaining_arg in remaining_argv:
-            if remaining_arg not in passed_args:
-                passed_args.append(remaining_arg)
 
         # Return the parsed arguments as a dict
         return vars(parser.parse_args(args=passed_args))

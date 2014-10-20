@@ -8,6 +8,7 @@
 # http://www.gnu.org/licenses/gpl.html
 # =============================================================================
 
+import sys
 import unittest
 
 import mock
@@ -47,7 +48,7 @@ class TestArguments(unittest.TestCase):
 
         self.args = {
             'optional_args': {
-                'option1': {
+                'base_option1': {
                     'commands': ['--base-option1'],
                     'help': 'Helpful Information'
                 }
@@ -61,11 +62,23 @@ class TestArguments(unittest.TestCase):
                 'subparsed1': {
                     'help': 'Helpful Information',
                     'optional_args': {
+                        'groups': {
+                            'some_group_name': {
+                                'text': 'other information',
+                                'group': [
+                                    'other_option3'
+                                ]
+                            }
+                        },
                         'mutually_exclusive': {
-                            'some_value': [
-                                'option1',
-                                'option2'
-                            ]
+                            'some_name': {
+                                'text': 'some information',
+                                'required': False,
+                                'group': [
+                                    'option1',
+                                    'option2'
+                                ]
+                            }
                         },
                         'option1': {
                             'commands': ['--option1'],
@@ -124,7 +137,10 @@ class TestArguments(unittest.TestCase):
             'app', '--base-option1', 'testval1', 'subparsed1',
             '--option1', '--option2', 'testval2'
         ]
-        self.assertRaises(SystemExit, self.arguments.arg_parser)
+        # Mutual exclusive arguments in sub groups was partial broken in
+        # Python 2.6.x. Related http://bugs.python.org/issue10680
+        if sys.version_info < (2, 6, 0):
+            self.assertRaises(SystemExit, self.arguments.arg_parser)
 
     def test_arg_parser_options_simple_more_options(self):
         arguments.argparse._sys.argv = [
