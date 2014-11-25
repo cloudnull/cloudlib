@@ -198,6 +198,6 @@ class ShellCommands(object):
                 self.log.error(msg)
                 raise cloudlib.MD5CheckMismatch(msg)
             else:
-                self.log.info('md5sum verified for [ %s ]', local_file)
+                self.log.debug('md5sum verified for [ %s ]', local_file)
                 return True
 
