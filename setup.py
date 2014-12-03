@@ -35,6 +35,7 @@ elif sys.version_info < (2, 7, 0):
 
 with open('README', 'rb') as r_file:
     LDINFO = r_file.read()
+    LDINFO = LDINFO.decode('utf-8')
 
 
 setuptools.setup(
@@ -58,6 +59,7 @@ setuptools.setup(
         ' (GPLv3+)',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.4',
         'Topic :: Utilities',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ]
