@@ -251,10 +251,14 @@ class ArgumentParserator(object):
         if self.detail is not None:
             self.detail = '%s\n' % self.detail
 
-        subparser = parser.add_subparsers(
-            title=self.title,
-            metavar=self.detail
-        )
+        if 'subparsed_args' in self.arguments:
+            subparser = parser.add_subparsers(
+                title=self.title,
+                metavar=self.detail
+            )
+        else:
+            subparser = None
+
         return parser, subparser, remaining_argv
 
     def arg_parser(self, passed_args=None):
@@ -270,7 +274,8 @@ class ArgumentParserator(object):
             passed_args = list()
 
         # Extend the passed args with the remaining parsed args
-        passed_args.extend(remaining_argv)
+        if remaining_argv:
+            passed_args.extend(remaining_argv)
 
         optional_args = self.arguments.get('optional_args')
         if optional_args:
