@@ -24,10 +24,18 @@
 <type 'dict'>
 """
 
-import ConfigParser
 import os
 import stat
 import sys
+
+# Lower import to support conditional configuration parser
+try:
+    import ConfigParser
+except ImportError:
+    if sys.version_info > (3, 2, 0):
+        import configparser
+    else:
+        raise SystemExit('No configparser module was found.')
 
 from cloudlib import utils
 from cloudlib import logger
