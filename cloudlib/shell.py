@@ -184,7 +184,10 @@ class ShellCommands(object):
                 file_object = open(local_file, 'rb')
 
             for chk in iter(calc_hash, ''):
-                md5.update(chk)
+                if isinstance(chk, bytes):
+                    md5.update(chk)
+                else:
+                    md5.update(chk.encode('utf-8'))
             else:
                 if not file_object:
                     file_object.close()

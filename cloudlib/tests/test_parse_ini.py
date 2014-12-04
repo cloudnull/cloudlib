@@ -108,15 +108,15 @@ class TestConfigFileIni(unittest.TestCase):
             SystemExit, self.config.check_perms, '0644,0444'
         )
 
-    def test_sys_config_config_args_parse_default_section(self):
+    def _run_functional(self, section):
         flag, local_file = tempfile.mkstemp()
         try:
             with open(local_file, 'wb') as f:
-                f.write(tests.CONFIG_FILE)
+                f.write(tests.CONFIG_FILE.encode('utf-8'))
             self.config.config_file = local_file
-            args = self.config.config_args(section='default')
+            args = self.config.config_args(section=section)
         except Exception as exp:
-            self.fail('Failed %s' % exp)
+            self.fail('Failed: %s' % exp)
         else:
             self.assertFalse(args.get('false_value'))
             self.assertTrue(args.get('true_value'))
@@ -125,19 +125,8 @@ class TestConfigFileIni(unittest.TestCase):
         finally:
             os.remove(local_file)
 
+    def test_sys_config_config_args_parse_default_section(self):
+        self._run_functional(section='default')
+
     def test_sys_config_config_args_parse_other_section(self):
-        flag, local_file = tempfile.mkstemp()
-        try:
-            with open(local_file, 'wb') as f:
-                f.write(tests.CONFIG_FILE)
-            self.config.config_file = local_file
-            args = self.config.config_args(section='other_section')
-        except Exception as exp:
-            self.fail('Failed %s' % exp)
-        else:
-            self.assertFalse(args.get('false_value'))
-            self.assertTrue(args.get('true_value'))
-            self.assertTrue(isinstance(args.get('integer_value'), int))
-            self.assertTrue(isinstance(args.get('string_value'), str))
-        finally:
-            os.remove(local_file)
+        self._run_functional(section='other_section')

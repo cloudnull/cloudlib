@@ -8,6 +8,8 @@
 # http://www.gnu.org/licenses/gpl.html
 # =============================================================================
 
+import sys
+
 
 def is_int(value):
     """Return value as int if the value can be an int.
@@ -27,7 +29,8 @@ def ensure_string(obj):
     :param obj: ``str`` || ``unicode``
     :return: ``str``
     """
-    if isinstance(obj, unicode):
+
+    if sys.version_info < (3, 2, 0) and isinstance(obj, unicode):
         return str(obj.encode('utf8'))
     else:
         return obj

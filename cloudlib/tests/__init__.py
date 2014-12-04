@@ -152,7 +152,7 @@ class ParseResult(object):
 class StatResult(object):
     st_mode = 33152
     st_ino = 1698903
-    st_dev = 16777220L
+    st_dev = 16777220
     st_nlink = 1
     st_uid = 100
     st_gid = 100

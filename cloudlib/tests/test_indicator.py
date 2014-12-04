@@ -8,7 +8,13 @@
 # http://www.gnu.org/licenses/gpl.html
 # =============================================================================
 
+import sys
+try:
+    import Queue as queue
+except ImportError:
+    import queue
 import unittest
+
 import mock
 
 from cloudlib import indicator
@@ -41,9 +47,8 @@ class TestBasicUtils(unittest.TestCase):
         self.assertEqual(spinner.msg, 'test')
 
     def test_class_objects_work_q(self):
-        import Queue
-        spinner = indicator.Spinner(work_q=Queue.Queue())
-        self.assertEqual(isinstance(spinner.work_q, Queue.Queue), True)
+        spinner = indicator.Spinner(work_q=queue.Queue())
+        self.assertEqual(isinstance(spinner.work_q, queue.Queue), True)
         self.assertEqual(spinner.run, True)
         self.assertEqual(spinner.msg, None)
 

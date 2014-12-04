@@ -107,6 +107,11 @@ class TestLoggerHandlers(unittest.TestCase):
         self.sh_patched = mock.patch('cloudlib.logger.logging.StreamHandler')
         self.sh = self.sh_patched.start()
 
+        self.ch_patched = mock.patch(
+            'cloudlib.logger.logging.Logger.callHandlers'
+        )
+        self.ch_patched.start()
+
         self.log = logger.LogSetup()
 
         self._log = mock.Mock()
@@ -115,6 +120,7 @@ class TestLoggerHandlers(unittest.TestCase):
     def tearDown(self):
         self.rh_patched.stop()
         self.sh_patched.stop()
+        self.ch_patched.stop()
 
     def test_getlogger_new_logger(self):
         log = logger.getLogger(name='testLogger')

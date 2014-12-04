@@ -100,8 +100,11 @@ class Mailer(object):
             reply_to = from_who
 
         try:
-            encoded_message = message.encode('utf8')
-            em_msg = text.MIMEText(encoded_message, 'plain', None)
+            em_msg = text.MIMEText(
+                _text=message.encode('utf8'),
+                _subtype='plain',
+                _charset='utf8'
+            )
             em_msg["Subject"] = subject
             em_msg["From"] = from_who
             em_msg["To"] = send_to

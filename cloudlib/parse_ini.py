@@ -33,7 +33,7 @@ try:
     import ConfigParser
 except ImportError:
     if sys.version_info > (3, 2, 0):
-        import configparser
+        import configparser as ConfigParser
     else:
         raise SystemExit('No configparser module was found.')
 
@@ -118,8 +118,8 @@ class ConfigurationSetup(object):
         :param perms: ``str``
         """
         confpath = os.path.realpath(self.config_file)
-        mode = oct(stat.S_IMODE(os.stat(confpath).st_mode))
-        if not any([mode == i for i in perms.split(',')]):
+        mode = stat.S_IMODE(os.stat(confpath).st_mode)
+        if not any([mode == int(i, 8) for i in perms.split(',')]):
             msg = (
                 'To use a configuration file the permissions'
                 ' need to be any of the following "%s"' % perms
@@ -155,7 +155,6 @@ class ConfigurationSetup(object):
         try:
             parser.read(self.config_file)
             for name, value in parser.items(section):
-                name = name.encode('utf8')
                 if any([value == 'False', value == 'false']):
                     value = False
                 elif any([value == 'True', value == 'true']):

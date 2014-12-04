@@ -155,7 +155,7 @@ class ArgumentParserator(object):
         )
 
     def _add_group(self, parser, groups, option_args):
-        for k, v in groups.iteritems():
+        for k, v in groups.items():
             group_text = v.pop('text', None)
             group_parser = parser.add_argument_group(group_text)
             _groups = v.pop('group', list())
@@ -166,7 +166,7 @@ class ArgumentParserator(object):
                 )
 
     def _add_mutually_exclusive_group(self, parser, groups, option_args):
-        for k, v in groups.iteritems():
+        for k, v in groups.items():
             group_text = v.pop('text', None)
             group_parser = parser.add_argument_group(group_text)
             ex_group_parser = group_parser.add_mutually_exclusive_group(
@@ -203,7 +203,7 @@ class ArgumentParserator(object):
                 option_args=option_args
             )
 
-        for k, v in option_args.iteritems():
+        for k, v in option_args.items():
             self._add_arg(parser=arg_parser, value_dict=v)
 
     def _setup_parser(self):
@@ -283,7 +283,7 @@ class ArgumentParserator(object):
 
         subparsed_args = self.arguments.get('subparsed_args')
         if subparsed_args:
-            for argument, value in subparsed_args.iteritems():
+            for argument, value in subparsed_args.items():
                 if 'optional_args' in value:
                     optional_args = value.pop('optional_args')
                 else:

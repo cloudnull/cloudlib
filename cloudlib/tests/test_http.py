@@ -12,7 +12,8 @@ import unittest
 import mock
 import requests
 
-from cloudlib import tests, http
+from cloudlib import http
+from cloudlib import tests
 
 
 class TestHttpMakeRequest(unittest.TestCase):

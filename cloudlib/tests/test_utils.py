@@ -8,6 +8,7 @@
 # http://www.gnu.org/licenses/gpl.html
 # =============================================================================
 
+import sys
 import unittest
 
 from cloudlib import utils

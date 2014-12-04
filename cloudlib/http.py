@@ -13,10 +13,21 @@
 >>> get_req = make_req.get('https://api.github.com/orgs/openstack')
 """
 
-import httplib
-import traceback
+import sys
 import urllib
-import urlparse
+
+
+# Added for python3 support
+try:
+    import httplib
+except ImportError:
+    import http.client as httplib
+
+# Added for python3 support
+try:
+    import urlparse
+except ImportError:
+    import urllib.parse as urlparse
 
 import requests
 
@@ -45,8 +56,10 @@ def html_encode(path):
     :param path: ``str``
     :return: ``str``
     """
-    _path = utils.ensure_string(path)
-    return urllib.quote(_path)
+    if sys.version_info > (3, 2, 0):
+        return urllib.parse.quote(utils.ensure_string(path))
+    else:
+        return urllib.quote(utils.ensure_string(path))
 
 
 class MakeRequest(object):
@@ -100,8 +113,7 @@ class MakeRequest(object):
     def _report_error(self, request, exp):
         """When making the request, if an error happens, log it."""
         message = (
-            "Failure to perform %s due to [ %s ] ERROR:\n%s"
-            % (request, exp, traceback.format_exc())
+            "Failure to perform %s due to [ %s ]" % (request, exp)
         )
         self.log.fatal(message)
         raise requests.RequestException(message)
