@@ -67,21 +67,18 @@ class Spinner(object):
         """Produce the spinner."""
 
         while self.run:
-            busy = ['|', '/', '-', '\\']
-            for item in busy:
-                try:
-                    size = self.work_q.qsize()
-                    if size > 0:
-                        note = 'Number of Jobs in Queue = %s ' % size
-                    else:
-                        note = 'Waiting for in-process Jobs to finish '
-                except Exception:
-                    note = 'Please Wait... '
+            try:
+                size = self.work_q.qsize()
+            except Exception:
+                note = 'Please wait '
+            else:
+                note = 'Number of Jobs in Queue = %s ' % size
 
-                if self.msg:
-                    note = '%s %s' % (note, self.msg)
+            if self.msg:
+                note = '%s %s' % (note, self.msg)
 
-                sys.stdout.write('\rProcessing - [ %s ] - %s' % (item, note))
+            for item in ['|', '/', '-', '\\']:
+                sys.stdout.write('\rProcessing - [ %s ] - %s ' % (item, note))
                 sys.stdout.flush()
                 time.sleep(.1)
                 self.run = self.run
