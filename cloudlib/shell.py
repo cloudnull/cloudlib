@@ -198,14 +198,19 @@ class ShellCommands(object):
                     file_object.close()
 
             lmd5sum = md5.hexdigest()
-            if md5sum != lmd5sum:
-                msg = (
-                    'CheckSumm Mis-Match "%s" != "%s" for [ %s ]'
-                    % (md5sum, lmd5sum, local_file)
-                )
-                self.log.error(msg)
-                raise cloudlib.MD5CheckMismatch(msg)
-            else:
-                self.log.debug('md5sum verified for [ %s ]', local_file)
-                return True
-
+            msg = 'Hash comparison'
+            try:
+                if md5sum != lmd5sum:
+                    msg = (
+                        '%s - CheckSumm Mis-Match "%s" != "%s" for [ %s ]' % (
+                            msg, md5sum, lmd5sum, local_file
+                        )
+                    )
+                    raise cloudlib.MD5CheckMismatch(msg)
+                else:
+                    msg = '%s - CheckSumm verified for [ %s ]' % (
+                        msg, local_file
+                    )
+                    return True
+            finally:
+                self.log.debug(msg)

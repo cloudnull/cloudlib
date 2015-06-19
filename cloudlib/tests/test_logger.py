@@ -19,6 +19,15 @@ import mock
 from cloudlib import logger
 
 
+class Stat(object):
+    def __init__(self, uid, gid):
+        self.st_uid = uid
+        self.st_gid = gid
+        self.st_size = 0
+        self.st_mtime = 0
+        self.st_mode = 0
+
+
 class TestLogger(unittest.TestCase):
     def setUp(self):
         self.log = logger.LogSetup()
@@ -26,11 +35,14 @@ class TestLogger(unittest.TestCase):
         self.uid_patched = mock.patch('cloudlib.logger.os.getuid')
         self.uid = self.uid_patched.start()
 
-        self.env_patched = mock.patch('cloudlib.logger.os.getenv')
+        self.env_patched = mock.patch('cloudlib.logger.os.path.expanduser')
         self.env = self.env_patched.start()
 
         self.idr_patched = mock.patch('cloudlib.logger.os.path.isdir')
         self.idr = self.idr_patched.start()
+
+        self.stat_patched = mock.patch('cloudlib.logger.os.stat')
+        self.stat = self.stat_patched.start()
 
     def tearDown(self):
         self.uid_patched.stop()
@@ -63,7 +75,10 @@ class TestLogger(unittest.TestCase):
         self.assertEqual(log.debug_logging, True)
 
     def test_logger_return_logfile_not_root_new_log_dir(self):
+        self.uid.return_value = 99
         self.env.return_value = '/home/TestUser'
+        self.idr.return_value = False
+        self.stat.return_value = Stat(uid=99, gid=99)
         logfile = self.log.return_logfile(
             filename='test_file', log_dir='/other'
         )
@@ -73,13 +88,16 @@ class TestLogger(unittest.TestCase):
         self.uid.return_value = 0
         self.env.return_value = '/root'
         self.idr.return_value = True
+        self.stat.return_value = Stat(uid=0, gid=0)
         logfile = self.log.return_logfile(
             filename='test_file', log_dir='/other'
         )
         self.assertEqual(logfile, '/other/test_file')
 
     def test_logger_return_logfile_not_root(self):
+        self.uid.return_value = 99
         self.env.return_value = '/home/TestUser'
+        self.stat.return_value = Stat(uid=0, gid=0)
         logfile = self.log.return_logfile(filename='test_file')
         self.assertEqual(logfile, '/home/TestUser/test_file')
 
@@ -87,6 +105,7 @@ class TestLogger(unittest.TestCase):
         self.uid.return_value = 0
         self.env.return_value = '/root'
         self.idr.return_value = True
+        self.stat.return_value = Stat(uid=0, gid=0)
         logfile = self.log.return_logfile(filename='test_file')
         self.assertEqual(logfile, '/var/log/test_file')
 
@@ -94,7 +113,6 @@ class TestLogger(unittest.TestCase):
         self.uid.return_value = 0
         self.env.return_value = '/root'
         self.idr.return_value = False
-
         logfile = self.log.return_logfile(
             filename='test_file', log_dir='/other'
         )

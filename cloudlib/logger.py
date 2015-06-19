@@ -134,12 +134,15 @@ class LogSetup(object):
         :return: ``str``
         """
         user = os.getuid()
-        home = os.getenv('HOME')
-        default_log_location = os.path.join(home, filename)
-        if not user == 0:
-            return default_log_location
+        home = os.path.expanduser('~')
+
+        if not os.path.isdir(log_dir):
+            return os.path.join(home, filename)
+
+        log_dir_stat = os.stat(log_dir)
+        if log_dir_stat.st_uid == user:
+            return os.path.join(log_dir, filename)
+        elif log_dir_stat.st_gid == user:
+            return os.path.join(log_dir, filename)
         else:
-            if os.path.isdir(log_dir):
-                return os.path.join(log_dir, filename)
-            else:
-                return default_log_location
+            return os.path.join(home, filename)
