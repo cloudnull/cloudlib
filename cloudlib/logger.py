@@ -26,8 +26,42 @@
 
 import logging
 import os
+import platform
 
 from logging import handlers
+
+from cloudlib import utils
+
+
+# This creates a colorized log message if the colorized option is set.
+class ColorLogRecord(logging.LogRecord):
+    def __init__(self, *args):
+        super(ColorLogRecord, self).__init__(*args)
+
+    def getMessage(self):
+        """Returns a colorized log message based on the log level.
+
+        If the platform is windows the original message will be returned
+        without colorization windows escape codes are crazy.
+
+        :returns: ``str``
+        """
+        msg = str(self.msg)
+        if self.args:
+            msg = msg % self.args
+
+        if platform.system().lower() == 'windows' or self.levelno < 10:
+            return msg
+        elif self.levelno >= 50:
+            return utils.return_colorized(msg, 'critical')
+        elif self.levelno >= 40:
+            return utils.return_colorized(msg, 'error')
+        elif self.levelno >= 30:
+            return utils.return_colorized(msg, 'warn')
+        elif self.levelno >= 20:
+            return utils.return_colorized(msg, 'info')
+        else:
+            return utils.return_colorized(msg, 'debug')
 
 
 def getLogger(name):
@@ -50,18 +84,22 @@ def getLogger(name):
 
 class LogSetup(object):
 
-    def __init__(self, max_size=500, max_backup=5, debug_logging=False):
+    def __init__(self, max_size=500, max_backup=5, debug_logging=False,
+                 colorized_messages=False):
         """Setup Logging.
 
         :param max_size: ``int``
         :param max_backup: ``int``
         :param debug_logging: ``bol``
+        :param colorized_messages: ``bol``
         """
         self.max_size = (max_size * 1024 * 1024)
         self.max_backup = max_backup
         self.debug_logging = debug_logging
         self.format = None
         self.name = None
+        if colorized_messages:
+            logging._logRecordFactory = ColorLogRecord
 
     def default_logger(self, name=__name__, enable_stream=False,
                        enable_file=True):

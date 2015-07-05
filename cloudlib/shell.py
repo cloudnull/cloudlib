@@ -188,7 +188,7 @@ class ShellCommands(object):
             if not file_object:
                 file_object = open(local_file, 'rb')
 
-            for chk in iter(calc_hash, ''):
+            for chk in iter(calc_hash, b''):
                 if isinstance(chk, bytes):
                     md5.update(chk)
                 else:

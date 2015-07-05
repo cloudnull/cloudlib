@@ -15,6 +15,28 @@
 import sys
 
 
+def return_colorized(msg, color):
+    """return a colorized string.
+
+    :param msg: Message to encode
+    :param color: Color to use
+    :type color: ``str``
+    :returns: ``str``
+    """
+
+    # Available Colors
+    colors = {
+        'debug': '\033[94m',
+        'info': '\033[92m',
+        'warn': '\033[93m',
+        'error': '\033[91m',
+        'critical': '\033[95m',
+        'ENDC': '\033[0m'
+    }
+
+    return '%s%s%s' % (colors[color.lower()], msg, colors['ENDC'])
+
+
 def is_int(value):
     """Return value as int if the value can be an int.
 
