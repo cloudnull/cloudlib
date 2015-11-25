@@ -28,6 +28,7 @@ import logging
 import os
 import platform
 import getpass
+import sys
 
 from logging import handlers
 
@@ -172,7 +173,10 @@ class LogSetup(object):
         :param log_dir: ``str``
         :return: ``str``
         """
-        user = getpass.getuser()
+        if sys.platform == 'win32':
+            user = getpass.getuser()
+        else:
+            user = os.getuid()
         home = os.path.expanduser('~')
 
         if not os.path.isdir(log_dir):
